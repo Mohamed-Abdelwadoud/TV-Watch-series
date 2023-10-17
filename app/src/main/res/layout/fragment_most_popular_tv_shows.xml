@@ -4,20 +4,20 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.MainActivity">
+    tools:context=".ui.MostPopularTvShowsFragment">
 
-
-    <androidx.fragment.app.FragmentContainerView
-        android:id="@+id/main_nav_host"
-        android:layout_width="0dp"
+    <androidx.recyclerview.widget.RecyclerView
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+        android:id="@+id/tvShowsRecyclerView"
+        android:layout_width="match_parent"
         android:layout_height="0dp"
+        android:clipToPadding="false"
+        android:orientation="vertical"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        android:name="androidx.navigation.fragment.NavHostFragment"
-        app:defaultNavHost ="true"
-        app:navGraph ="@navigation/main_nav_graph"
-        />
+        tools:listitem="@layout/item_container_tv_show" />
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>
