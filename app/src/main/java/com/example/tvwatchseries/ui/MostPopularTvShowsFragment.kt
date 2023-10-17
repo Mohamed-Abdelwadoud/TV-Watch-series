@@ -72,20 +72,31 @@ class MostPopularTvShowsFragment : Fragment() {
 
 
     private fun getMostPopularTVShows() {
-
-        mMostPopularTvShowsViewModel.getMostPopTvShows(currentPage)?.observe(this) { response ->
-            if (response != null) {
-                Log.d("GGGGGGGGGGGGGGGg", "getMostPopularTVShows: ")
-                totalAvailablePages= response.total!!
-                if (response.tvShows?.isNotEmpty() == true){
-                    Log.d("GGGGGGGGGGGGGGGg", "getMostPopularTVShows: list not empty")
-                    mostPopularTvShowsAdaptor.addList(response.tvShows as ArrayList<TvShowsItem>?)
+        if (binding.loadingBar.visibility!=View.VISIBLE){
+            binding.loadingBar.visibility=View.VISIBLE
+            mMostPopularTvShowsViewModel.getMostPopTvShows(currentPage)?.observe(this) { response ->
+                if (response != null) {
+                    Log.d("GGGGGGGGGGGGGGGg", "getMostPopularTVShows: ")
+                    totalAvailablePages= response.total!!
+                    if (response.tvShows?.isNotEmpty() == true){
+                        Log.d("GGGGGGGGGGGGGGGg", "getMostPopularTVShows: list not empty")
+                        mostPopularTvShowsAdaptor.addList(response.tvShows as ArrayList<TvShowsItem>?)
+                    }
                 }
+                binding.loadingBar.visibility=View.GONE
+
             }
         }
 
 
+
+
+
+
+
     }
+
+
 
 
 }
