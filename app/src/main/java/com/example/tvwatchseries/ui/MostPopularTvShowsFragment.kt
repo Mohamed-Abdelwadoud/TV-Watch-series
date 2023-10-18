@@ -7,6 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.Navigation.findNavController
 import androidx.recyclerview.widget.RecyclerView
 import com.example.tvwatchseries.R
 import com.example.tvwatchseries.data.model.TvShowsItem
@@ -14,7 +15,7 @@ import com.example.tvwatchseries.databinding.FragmentMostPopularTvShowsBinding
 import com.example.tvwatchseries.ui.adaptors.MostPopularTvShowsAdaptor
 import com.example.tvwatchseries.viewModels.MostPopularTvShowsViewModel
 
-class MostPopularTvShowsFragment : Fragment() {
+class MostPopularTvShowsFragment : Fragment(), MostPopularTvShowsAdaptor.TvListener {
     private lateinit var binding: FragmentMostPopularTvShowsBinding
     private lateinit var mostPopularTvShowsAdaptor: MostPopularTvShowsAdaptor
     private lateinit var mMostPopularTvShowsViewModel: MostPopularTvShowsViewModel
@@ -49,8 +50,9 @@ class MostPopularTvShowsFragment : Fragment() {
 
     private fun initUI() {
 
-        mMostPopularTvShowsViewModel = ViewModelProvider(this)[MostPopularTvShowsViewModel::class.java]
-        mostPopularTvShowsAdaptor = MostPopularTvShowsAdaptor()
+        mMostPopularTvShowsViewModel =
+            ViewModelProvider(this)[MostPopularTvShowsViewModel::class.java]
+        mostPopularTvShowsAdaptor = MostPopularTvShowsAdaptor(this)
         binding.tvShowsRecyclerView.adapter = mostPopularTvShowsAdaptor
         binding.tvShowsRecyclerView.setHasFixedSize(true)
 
@@ -72,31 +74,32 @@ class MostPopularTvShowsFragment : Fragment() {
 
 
     private fun getMostPopularTVShows() {
-        if (binding.loadingBar.visibility!=View.VISIBLE){
-            binding.loadingBar.visibility=View.VISIBLE
+        if (binding.loadingBar.visibility != View.VISIBLE) {
+            binding.loadingBar.visibility = View.VISIBLE
             mMostPopularTvShowsViewModel.getMostPopTvShows(currentPage)?.observe(this) { response ->
                 if (response != null) {
                     Log.d("GGGGGGGGGGGGGGGg", "getMostPopularTVShows: ")
-                    totalAvailablePages= response.total!!
-                    if (response.tvShows?.isNotEmpty() == true){
+                    totalAvailablePages = response.total!!
+                    if (response.tvShows?.isNotEmpty() == true) {
                         Log.d("GGGGGGGGGGGGGGGg", "getMostPopularTVShows: list not empty")
                         mostPopularTvShowsAdaptor.addList(response.tvShows as ArrayList<TvShowsItem>?)
                     }
                 }
-                binding.loadingBar.visibility=View.GONE
+                binding.loadingBar.visibility = View.GONE
 
             }
         }
 
 
-
-
-
-
-
     }
 
-
+    override fun handleTVPress(ClickedShow: TvShowsItem) {
+        findNavController(requireView()).navigate(
+            MostPopularTvShowsFragmentDirections.actionMostPopularTvShowsFragmentToDetailedTvShowFragment(
+                ClickedShow
+            )
+        )
+    }
 
 
 }

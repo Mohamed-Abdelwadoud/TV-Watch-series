@@ -9,5 +9,18 @@
         android:id="@+id/mostPopularTvShowsFragment"
         android:name="com.example.tvwatchseries.ui.MostPopularTvShowsFragment"
         android:label="fragment_most_popular_tv_shows"
-        tools:layout="@layout/fragment_most_popular_tv_shows" />
+        tools:layout="@layout/fragment_most_popular_tv_shows" >
+        <action
+            android:id="@+id/action_mostPopularTvShowsFragment_to_detailedTvShowFragment"
+            app:destination="@id/detailedTvShowFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/detailedTvShowFragment"
+        android:name="com.example.tvwatchseries.ui.DetailedTvShowFragment"
+        android:label="fragment_detailed_tv_show"
+        tools:layout="@layout/fragment_detailed_tv_show" >
+        <argument
+            android:name="clicked"
+            app:argType="com.example.tvwatchseries.data.model.TvShowsItem" />
+    </fragment>
 </navigation>

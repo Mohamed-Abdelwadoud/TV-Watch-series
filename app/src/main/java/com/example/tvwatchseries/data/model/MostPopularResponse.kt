@@ -45,4 +45,6 @@ data class TvShowsItem(
 
 	@field:SerializedName("status")
 	val status: String? = null
-)
+):java.io.Serializable{
+
+}
