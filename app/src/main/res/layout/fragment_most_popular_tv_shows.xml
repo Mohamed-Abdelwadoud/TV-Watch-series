@@ -7,10 +7,39 @@
     android:background="@color/mainDark"
     tools:context=".ui.MostPopularTvShowsFragment">
 
+
+        <LinearLayout
+            android:orientation="horizontal"
+            android:weightSum="4"
+            android:id="@+id/TopLinearHolder"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+            <TextView
+                android:textStyle="bold"
+                android:layout_weight="3"
+                android:layout_margin="@dimen/_8sdp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Most Popluar TV Show"
+                android:textColor="@color/white"/>
+
+            <ImageView
+                android:id="@+id/searchImage"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_baseline_search_24"
+                android:layout_margin="@dimen/_8sdp"
+                />
+
+        </LinearLayout>
+
+
     <androidx.recyclerview.widget.RecyclerView
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
         android:id="@+id/tvShowsRecyclerView"
-
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:clipToPadding="false"
@@ -18,7 +47,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/TopLinearHolder"
         tools:listitem="@layout/item_container_tv_show" />
 
 

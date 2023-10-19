@@ -32,6 +32,11 @@ class MostPopularTvShowsAdaptor(tvListener: TvListener) :
         notifyDataSetChanged()
     }
 
+    fun setList(list: ArrayList<TvShowsItem>?) {
+        tvShows = list!!
+        notifyDataSetChanged()
+    }
+
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ItemTVHolder {
         val binding =
@@ -62,9 +67,7 @@ class MostPopularTvShowsAdaptor(tvListener: TvListener) :
         init {
             binding.root.setOnClickListener(View.OnClickListener {
                 mListener.handleTVPress(
-                    tvShows.get(
-                        layoutPosition
-                    )
+                    tvShows[layoutPosition]
                 )
             })
         }

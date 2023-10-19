@@ -2,30 +2,33 @@ package com.example.tvwatchseries.ui
 
 import android.os.Bundle
 import android.util.Log
+import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
-import androidx.navigation.Navigation.findNavController
+import androidx.navigation.Navigation
 import androidx.recyclerview.widget.RecyclerView
 import com.example.tvwatchseries.R
 import com.example.tvwatchseries.data.model.TvShowsItem
 import com.example.tvwatchseries.databinding.FragmentMostPopularTvShowsBinding
+import com.example.tvwatchseries.databinding.FragmentSearchBinding
 import com.example.tvwatchseries.ui.adaptors.MostPopularTvShowsAdaptor
 import com.example.tvwatchseries.viewModels.MostPopularTvShowsViewModel
+import com.example.tvwatchseries.viewModels.SearchViewModel
 
-class MostPopularTvShowsFragment : Fragment(), MostPopularTvShowsAdaptor.TvListener {
-    private lateinit var binding: FragmentMostPopularTvShowsBinding
+class SearchFragment : Fragment(), MostPopularTvShowsAdaptor.TvListener {
+    // test Code
+    private lateinit var binding: FragmentSearchBinding
+    private var input: String = ""
     private lateinit var mostPopularTvShowsAdaptor: MostPopularTvShowsAdaptor
-    private lateinit var mMostPopularTvShowsViewModel: MostPopularTvShowsViewModel
+    private lateinit var mSearchViewModel: SearchViewModel
     private var currentPage = 1
     private var totalAvailablePages = 1
 
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        binding = FragmentMostPopularTvShowsBinding.inflate(layoutInflater)
+        binding = FragmentSearchBinding.inflate(layoutInflater)
 
     }
 
@@ -34,29 +37,28 @@ class MostPopularTvShowsFragment : Fragment(), MostPopularTvShowsAdaptor.TvListe
         savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
-
-
-        return inflater.inflate(R.layout.fragment_most_popular_tv_shows, container, false)
+        return inflater.inflate(R.layout.fragment_search, container, false)
     }
-
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        binding = FragmentMostPopularTvShowsBinding.bind(view)
+        binding = FragmentSearchBinding.bind(view)
         initUI()
 
         binding.searchImage.setOnClickListener(View.OnClickListener {
-            findNavController(requireView()).navigate(
-                MostPopularTvShowsFragmentDirections.actionMostPopularTvShowsFragmentToSearchFragment())
+            input = binding.searchEditText.text.toString().trim()
+            if (input.isNotEmpty()) {
+                getResult(input)
+                binding.loadingBar.visibility=View.VISIBLE
+                binding.tvShowsRecyclerView.visibility=View.GONE
+            }
         })
-
 
     }
 
     private fun initUI() {
-
-        mMostPopularTvShowsViewModel =
-            ViewModelProvider(this)[MostPopularTvShowsViewModel::class.java]
+        mSearchViewModel =
+            ViewModelProvider(this)[SearchViewModel::class.java]
         mostPopularTvShowsAdaptor = MostPopularTvShowsAdaptor(this)
         binding.tvShowsRecyclerView.adapter = mostPopularTvShowsAdaptor
         binding.tvShowsRecyclerView.setHasFixedSize(true)
@@ -66,43 +68,39 @@ class MostPopularTvShowsFragment : Fragment(), MostPopularTvShowsAdaptor.TvListe
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
                 super.onScrolled(recyclerView, dx, dy)
                 if (!binding.tvShowsRecyclerView.canScrollVertically(1)) {
-                    if (currentPage <= totalAvailablePages) {
-                        currentPage += 1
-                        getMostPopularTVShows()
+                    if (input.isNotEmpty()) {
+                        if (currentPage <= totalAvailablePages) {
+                            currentPage += 1
+                            getResult(input)
+                        }
                     }
                 }
             }
         })
-        getMostPopularTVShows()
 
     }
 
 
-    private fun getMostPopularTVShows() {
-        if (binding.loadingBar.visibility != View.VISIBLE) {
-            binding.loadingBar.visibility = View.VISIBLE
-            mMostPopularTvShowsViewModel.getMostPopTvShows(currentPage)?.observe(this) { response ->
-                if (response != null) {
-                    totalAvailablePages = response.total!!
-                    if (response.tvShows?.isNotEmpty() == true) {
-                        mostPopularTvShowsAdaptor.addList(response.tvShows as ArrayList<TvShowsItem>?)
-                    }
+    private fun getResult(input: String) {
+        mSearchViewModel.getSearchTVShows(input, currentPage)?.observe(this) { response ->
+            if (response != null) {
+                totalAvailablePages = response.total!!
+                if (response.tvShows?.isNotEmpty() == true) {
+                    mostPopularTvShowsAdaptor.setList(response.tvShows as ArrayList<TvShowsItem>?)
+                    binding.loadingBar.visibility=View.GONE
+                    binding.tvShowsRecyclerView.visibility=View.VISIBLE
                 }
-                binding.loadingBar.visibility = View.GONE
-
             }
+
         }
-
-
     }
 
     override fun handleTVPress(ClickedShow: TvShowsItem) {
-        findNavController(requireView()).navigate(
-            MostPopularTvShowsFragmentDirections.actionMostPopularTvShowsFragmentToDetailedTvShowFragment(
+        Navigation.findNavController(requireView()).navigate(
+            SearchFragmentDirections.actionSearchFragmentToDetailedTvShowFragment(
                 ClickedShow
             )
         )
     }
-
 
 }

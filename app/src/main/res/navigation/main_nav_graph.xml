@@ -13,6 +13,9 @@
         <action
             android:id="@+id/action_mostPopularTvShowsFragment_to_detailedTvShowFragment"
             app:destination="@id/detailedTvShowFragment" />
+        <action
+            android:id="@+id/action_mostPopularTvShowsFragment_to_searchFragment"
+            app:destination="@id/searchFragment" />
     </fragment>
     <fragment
         android:id="@+id/detailedTvShowFragment"
@@ -22,5 +25,14 @@
         <argument
             android:name="clicked"
             app:argType="com.example.tvwatchseries.data.model.TvShowsItem" />
+    </fragment>
+    <fragment
+        android:id="@+id/searchFragment"
+        android:name="com.example.tvwatchseries.ui.SearchFragment"
+        android:label="fragment_search"
+        tools:layout="@layout/fragment_search" >
+        <action
+            android:id="@+id/action_searchFragment_to_detailedTvShowFragment"
+            app:destination="@id/detailedTvShowFragment" />
     </fragment>
 </navigation>

@@ -2,16 +2,14 @@ package com.example.tvwatchseries.repository
 
 import android.util.Log
 import androidx.lifecycle.MutableLiveData
-import com.example.tvwatchseries.data.model.DetailedResponse
 import com.example.tvwatchseries.data.model.MostPopularResponse
-import com.example.tvwatchseries.data.model.TvShow
 import com.example.tvwatchseries.data.source.remote.ApiClient
 import com.example.tvwatchseries.data.source.remote.ApiService
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
-class ShowDetailsRepository {
+class SearchRepository {
     private var apiService: ApiService? = null
 
     init {
@@ -19,17 +17,17 @@ class ShowDetailsRepository {
     }
 
 
-    fun getDetailedTVShows(id: String): MutableLiveData<DetailedResponse> {
-        val data: MutableLiveData<DetailedResponse> = MutableLiveData<DetailedResponse>()
-        apiService?.getTVShowDetails(id)!!.enqueue(object : Callback<DetailedResponse?> {
+    fun getSearchedShows(q:String,page: Int ): MutableLiveData<MostPopularResponse> {
+        val data: MutableLiveData<MostPopularResponse> = MutableLiveData<MostPopularResponse>()
+        apiService?.searchTVShow(q,page)!!.enqueue(object : Callback<MostPopularResponse?> {
             override fun onResponse(
-                call: Call<DetailedResponse?>,
-                response: Response<DetailedResponse?>
+                call: Call<MostPopularResponse?>,
+                response: Response<MostPopularResponse?>
+
             ) {
                 data.value = response.body()
             }
-
-            override fun onFailure(call: Call<DetailedResponse?>, t: Throwable) {
+            override fun onFailure(call: Call<MostPopularResponse?>, t: Throwable) {
                 data.value = (null)
             }
         })

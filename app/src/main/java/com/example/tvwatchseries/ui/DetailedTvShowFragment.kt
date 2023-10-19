@@ -61,7 +61,6 @@ class DetailedTvShowFragment : Fragment() {
         detailedTVViewModel.getTVDetails(clicked.id.toString())?.observe(this) { response ->
             if (response != null) {
                 if (response.tvShow?.pictures?.isNotEmpty() == true) {
-                    Log.d("RRRRRRRRRRRRRRRR", "getApiCall:  pic not null or empty")
                     initViewPAger(response.tvShow.pictures)
                     binding.picturesViewPager.visibility = View.VISIBLE
                     binding.linearSliderIndicators.visibility = View.VISIBLE

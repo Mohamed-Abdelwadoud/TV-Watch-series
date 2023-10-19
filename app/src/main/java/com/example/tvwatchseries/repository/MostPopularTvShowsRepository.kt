@@ -25,13 +25,11 @@ class MostPopularTvShowsRepository() {
                 response: Response<MostPopularResponse?>
 
             ) {
-                Log.d("GGGGGGGGGGGGGGGg", "onResponse: ")
                 data.value = response.body()
             }
 
             override fun onFailure(call: Call<MostPopularResponse?>, t: Throwable) {
                 data.value = (null)
-                Log.d("GGGGGGGGGGGGGGGg", "onFailure: ${t.message}")
             }
         })
 
