@@ -4,6 +4,7 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.example.tvwatchseries.databinding.ItemPicLayoutBinding
+import com.example.tvwatchseries.util.FetchImageUrl
 import com.squareup.picasso.Callback
 import com.squareup.picasso.Picasso
 
@@ -19,22 +20,7 @@ class PicturesAdaptor(picArray: ArrayList<String>) :
     }
 
     override fun onBindViewHolder(holder: PicHolder, position: Int) {
-        try {
-            holder.binding.imageShow.alpha = 0f
-            Picasso.get().load(picList[position]).noFade().into(holder.binding.imageShow, object :
-                Callback {
-                override fun onSuccess() {
-                    holder.binding.imageShow.animate().setDuration(300).alpha(1f).start()
-                }
-
-                override fun onError(e: Exception?) {
-
-                }
-            })
-        } catch (ignored: Exception) {
-        }
-
-
+        FetchImageUrl.getImageURL(holder.binding.imageShow, picList[position])
     }
 
     override fun getItemCount(): Int {

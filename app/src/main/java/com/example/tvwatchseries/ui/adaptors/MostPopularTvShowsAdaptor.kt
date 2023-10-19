@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.example.tvwatchseries.data.model.TvShowsItem
 import com.example.tvwatchseries.databinding.ItemContainerTvShowBinding
+import com.example.tvwatchseries.util.FetchImageUrl
 import com.squareup.picasso.Callback
 import com.squareup.picasso.Picasso
 import org.jetbrains.annotations.NotNull
@@ -44,22 +45,10 @@ class MostPopularTvShowsAdaptor(tvListener: TvListener) :
         holder.binding.textStatus.text = tvShows[position].status
         holder.binding.textStarted.text = tvShows[position].startDate
         holder.binding.textNetwork.text = tvShows[position].network
-        try {
-            holder.binding.imageTvShow.alpha = 0f
-            Picasso.get().load(tvShows.get(position)?.imageThumbnailPath).noFade()
-                .into(holder.binding.imageTvShow, object :
-                    Callback {
-                    override fun onSuccess() {
-                        holder.binding.imageTvShow.animate().setDuration(300).alpha(1f).start()
-                    }
-
-                    override fun onError(e: Exception?) {
-
-                    }
-                })
-        } catch (ignored: Exception) {
-        }
-
+        FetchImageUrl.getImageURL(
+            holder.binding.imageTvShow,
+            tvShows[position].imageThumbnailPath!!
+        )
     }
 
     override fun getItemCount(): Int {
