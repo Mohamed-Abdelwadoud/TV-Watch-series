@@ -1,6 +1,8 @@
 package com.example.tvwatchseries.ui
 
 import android.content.Intent
+import android.graphics.BitmapFactory
+import android.util.Base64
 import android.net.Uri
 import android.os.Bundle
 import android.util.Log
@@ -49,6 +51,7 @@ class DetailedTvShowFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         clicked = DetailedTvShowFragmentArgs.fromBundle(requireArguments()).clicked
+
         initMainCard()
 
         getApiCall()
@@ -124,14 +127,14 @@ class DetailedTvShowFragment : Fragment() {
             OnPageChangeCallback() {
             override fun onPageSelected(position: Int) {
                 super.onPageSelected(position)
-                autoSilding((pictures.size))
+                autoSliding((pictures.size))
                 maxCount = pictures.size
-                setcurrentSliderIndicator(position)
+                setCurrentSliderIndicator(position)
             }
         })
     }
 
-    fun setupSliderIndicator(count: Int) {
+    private fun setupSliderIndicator(count: Int) {
         val indicator = arrayOfNulls<ImageView>(count)
         val layoutParams = LinearLayout.LayoutParams(
             ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT
@@ -147,12 +150,12 @@ class DetailedTvShowFragment : Fragment() {
             )
             indicator[i]!!.layoutParams = layoutParams
             binding.linearSliderIndicators.addView(indicator[i])
-            setcurrentSliderIndicator(0)
+            setCurrentSliderIndicator(0)
         }
         binding.linearSliderIndicators.visibility = View.VISIBLE
     }
 
-    fun setcurrentSliderIndicator(position: Int) {
+    private fun setCurrentSliderIndicator(position: Int) {
         val childCount: Int = binding.linearSliderIndicators.childCount
         for (i in 0 until childCount) {
             val imageView =
@@ -176,7 +179,7 @@ class DetailedTvShowFragment : Fragment() {
     }
 
 
-    private fun autoSilding(max: Int) {
+    private fun autoSliding(max: Int) {
         var currentPage = binding.picturesViewPager.currentItem
         val autoScrollInterval = 3000 // Delay in milliseconds
 
@@ -199,20 +202,29 @@ class DetailedTvShowFragment : Fragment() {
         binding.tvMainData.textStarted.text = clicked.startDate
         binding.tvMainData.textStatus.text = clicked.status
         binding.tvMainData.textName.text = clicked.name
-        try {
-            binding.tvMainData.imageTvShow.alpha = 0f
-            Picasso.get().load(clicked.imageThumbnailPath).noFade()
-                .into(binding.tvMainData.imageTvShow, object :
-                    Callback {
-                    override fun onSuccess() {
-                        binding.tvMainData.imageTvShow.animate().setDuration(300).alpha(1f).start()
-                    }
+        if (clicked.imageThumbnailPath?.startsWith("https",true) == true){
+            try {
+                binding.tvMainData.imageTvShow.alpha = 0f
+                Picasso.get().load(clicked.imageThumbnailPath).noFade()
+                    .into(binding.tvMainData.imageTvShow, object :
+                        Callback {
+                        override fun onSuccess() {
+                            binding.tvMainData.imageTvShow.animate().setDuration(300).alpha(1f).start()
+                        }
 
-                    override fun onError(e: Exception?) {
-                    }
-                })
-        } catch (ignored: Exception) {
+                        override fun onError(e: Exception?) {
+                        }
+                    })
+            } catch (ignored: Exception) {
+            }
+        }else{
+            val byteArray: ByteArray = Base64.decode(clicked.imageThumbnailPath, Base64.DEFAULT)
+            binding.tvMainData.imageTvShow.setImageBitmap(BitmapFactory.decodeByteArray(byteArray, 0, byteArray.size))
+
+
         }
+
+
 
     }
 

@@ -1,24 +1,37 @@
 package com.example.tvwatchseries.ui
 
+import android.graphics.Bitmap
+import android.graphics.Canvas
+import android.graphics.drawable.BitmapDrawable
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.toArgb
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.Navigation.findNavController
+import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
 import com.example.tvwatchseries.R
+import com.example.tvwatchseries.data.model.TVShowEntity
 import com.example.tvwatchseries.data.model.TvShowsItem
 import com.example.tvwatchseries.databinding.FragmentMostPopularTvShowsBinding
-import com.example.tvwatchseries.ui.adaptors.MostPopularTvShowsAdaptor
+import com.example.tvwatchseries.databinding.ItemContainerTvShowBinding
+import com.example.tvwatchseries.ui.adaptors.TvShowsAdaptor
+import com.example.tvwatchseries.viewModels.FavTvShowsViewModel
 import com.example.tvwatchseries.viewModels.MostPopularTvShowsViewModel
+import it.xabaras.android.recyclerview.swipedecorator.RecyclerViewSwipeDecorator
+import java.io.ByteArrayOutputStream
 
-class MostPopularTvShowsFragment : Fragment(), MostPopularTvShowsAdaptor.TvListener {
+
+class MostPopularTvShowsFragment : Fragment(), TvShowsAdaptor.TvListener {
     private lateinit var binding: FragmentMostPopularTvShowsBinding
-    private lateinit var mostPopularTvShowsAdaptor: MostPopularTvShowsAdaptor
+    private lateinit var tvShowsAdaptor: TvShowsAdaptor
     private lateinit var mMostPopularTvShowsViewModel: MostPopularTvShowsViewModel
+    private lateinit var mFavTvShowsViewModel: FavTvShowsViewModel
     private var currentPage = 1
     private var totalAvailablePages = 1
 
@@ -47,7 +60,14 @@ class MostPopularTvShowsFragment : Fragment(), MostPopularTvShowsAdaptor.TvListe
 
         binding.searchImage.setOnClickListener(View.OnClickListener {
             findNavController(requireView()).navigate(
-                MostPopularTvShowsFragmentDirections.actionMostPopularTvShowsFragmentToSearchFragment())
+                MostPopularTvShowsFragmentDirections.actionMostPopularTvShowsFragmentToSearchFragment()
+            )
+        })
+
+        binding.FavImage.setOnClickListener(View.OnClickListener {
+            findNavController(requireView()).navigate(
+                MostPopularTvShowsFragmentDirections.actionMostPopularTvShowsFragmentToFavTvShowFragment2()
+            )
         })
 
 
@@ -57,8 +77,8 @@ class MostPopularTvShowsFragment : Fragment(), MostPopularTvShowsAdaptor.TvListe
 
         mMostPopularTvShowsViewModel =
             ViewModelProvider(this)[MostPopularTvShowsViewModel::class.java]
-        mostPopularTvShowsAdaptor = MostPopularTvShowsAdaptor(this)
-        binding.tvShowsRecyclerView.adapter = mostPopularTvShowsAdaptor
+        tvShowsAdaptor = TvShowsAdaptor(this)
+        binding.tvShowsRecyclerView.adapter = tvShowsAdaptor
         binding.tvShowsRecyclerView.setHasFixedSize(true)
 
         binding.tvShowsRecyclerView.addOnScrollListener(object :
@@ -75,6 +95,8 @@ class MostPopularTvShowsFragment : Fragment(), MostPopularTvShowsAdaptor.TvListe
         })
         getMostPopularTVShows()
 
+        setSwipe()
+
     }
 
 
@@ -85,8 +107,12 @@ class MostPopularTvShowsFragment : Fragment(), MostPopularTvShowsAdaptor.TvListe
                 if (response != null) {
                     totalAvailablePages = response.total!!
                     if (response.tvShows?.isNotEmpty() == true) {
-                        mostPopularTvShowsAdaptor.addList(response.tvShows as ArrayList<TvShowsItem>?)
+                        tvShowsAdaptor.addList(response.tvShows as ArrayList<TvShowsItem>?)
                     }
+
+                }else{
+                    Toast.makeText(context,"Connection Lost",Toast.LENGTH_SHORT).show()
+
                 }
                 binding.loadingBar.visibility = View.GONE
 
@@ -96,12 +122,102 @@ class MostPopularTvShowsFragment : Fragment(), MostPopularTvShowsAdaptor.TvListe
 
     }
 
+
+    private fun setSwipe() {
+        var simpleCallBack: ItemTouchHelper.SimpleCallback =
+            object :
+                ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT) {
+
+                override fun onMove(
+                    recyclerView: RecyclerView,
+                    viewHolder: RecyclerView.ViewHolder,
+                    target: RecyclerView.ViewHolder
+                ): Boolean {
+                    return true
+                }
+
+                override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
+                    if (direction == ItemTouchHelper.LEFT) {
+                        val holder = viewHolder as TvShowsAdaptor.ItemTVHolder
+                        saveToWatchList(holder.binding)
+                        tvShowsAdaptor.notifyDataSetChanged()
+                    }
+                }
+
+                override fun onChildDraw(
+                    c: Canvas,
+                    recyclerView: RecyclerView,
+                    viewHolder: RecyclerView.ViewHolder,
+                    dX: Float,
+                    dY: Float,
+                    actionState: Int,
+                    isCurrentlyActive: Boolean
+                ) {
+                    RecyclerViewSwipeDecorator.Builder(
+                        c,
+                        recyclerView,
+                        viewHolder,
+                        dX,
+                        dY,
+                        actionState,
+                        isCurrentlyActive
+                    )
+                        .addSwipeLeftActionIcon(R.drawable.ic_baseline_watch_later_24)
+                        .addSwipeLeftLabel("SaveTo Watch List")
+                        .addSwipeLeftBackgroundColor(Color.White.toArgb())
+                        .create()
+                        .decorate()
+
+                    super.onChildDraw(
+                        c,
+                        recyclerView,
+                        viewHolder,
+                        dX,
+                        dY,
+                        actionState,
+                        isCurrentlyActive
+                    )
+                }
+
+            }
+
+        val itemTouchHelper = ItemTouchHelper(simpleCallBack)
+
+        itemTouchHelper.attachToRecyclerView(binding.tvShowsRecyclerView)
+    }
+
+
+
     override fun handleTVPress(ClickedShow: TvShowsItem) {
         findNavController(requireView()).navigate(
             MostPopularTvShowsFragmentDirections.actionMostPopularTvShowsFragmentToDetailedTvShowFragment(
                 ClickedShow
             )
         )
+    }
+
+
+    private fun saveToWatchList(binding: ItemContainerTvShowBinding) {
+
+        mFavTvShowsViewModel = ViewModelProvider(this)[FavTvShowsViewModel::class.java]
+        val drawable = binding.imageTvShow.drawable
+        val bitmap = (drawable as? BitmapDrawable)?.bitmap
+        val byteArrayOutputStream = ByteArrayOutputStream()
+        bitmap?.compress(Bitmap.CompressFormat.PNG, 100, byteArrayOutputStream)
+        val byteArray = byteArrayOutputStream.toByteArray()
+        byteArrayOutputStream.close()
+
+        mFavTvShowsViewModel.addNewTvShow(
+            TVShowEntity(
+                binding.imageTvShow.contentDescription.toString(), // id
+                binding.textName.text.toString(),
+                binding.textStarted.text.toString(),
+                binding.textNetwork.text.toString(),
+                binding.textStatus.text.toString(),
+                byteArray
+            )
+        )
+
     }
 
 

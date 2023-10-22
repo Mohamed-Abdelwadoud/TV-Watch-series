@@ -17,6 +17,7 @@
         app:layout_constraintTop_toTopOf="@+id/textName" />
 
     <ImageView
+        android:contentDescription="TVShoWID"
         android:id="@+id/imageTvShow"
         android:layout_width="@dimen/_70sdp"
         android:layout_height="@dimen/_100sdp"

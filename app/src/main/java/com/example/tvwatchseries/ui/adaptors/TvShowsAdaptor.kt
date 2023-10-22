@@ -1,6 +1,5 @@
 package com.example.tvwatchseries.ui.adaptors
 
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -8,12 +7,9 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.tvwatchseries.data.model.TvShowsItem
 import com.example.tvwatchseries.databinding.ItemContainerTvShowBinding
 import com.example.tvwatchseries.util.FetchImageUrl
-import com.squareup.picasso.Callback
-import com.squareup.picasso.Picasso
-import org.jetbrains.annotations.NotNull
 
-class MostPopularTvShowsAdaptor(tvListener: TvListener) :
-    RecyclerView.Adapter<MostPopularTvShowsAdaptor.ItemTVHolder>() {
+class TvShowsAdaptor(tvListener: TvListener) :
+    RecyclerView.Adapter<TvShowsAdaptor.ItemTVHolder>() {
     private var mListener: TvListener
 
     init {
@@ -21,6 +17,7 @@ class MostPopularTvShowsAdaptor(tvListener: TvListener) :
     }
 
     private var tvShows: ArrayList<TvShowsItem> = ArrayList()
+
 
     fun addList(list: ArrayList<TvShowsItem>?) {
         if (tvShows.isEmpty()) {
@@ -32,7 +29,7 @@ class MostPopularTvShowsAdaptor(tvListener: TvListener) :
         notifyDataSetChanged()
     }
 
-    fun setList(list: ArrayList<TvShowsItem>?) {
+    fun setList(list: ArrayList<TvShowsItem>) {
         tvShows = list!!
         notifyDataSetChanged()
     }
@@ -50,6 +47,7 @@ class MostPopularTvShowsAdaptor(tvListener: TvListener) :
         holder.binding.textStatus.text = tvShows[position].status
         holder.binding.textStarted.text = tvShows[position].startDate
         holder.binding.textNetwork.text = tvShows[position].network
+        holder.binding.imageTvShow.contentDescription = "${tvShows[position].id}"
         FetchImageUrl.getImageURL(
             holder.binding.imageTvShow,
             tvShows[position].imageThumbnailPath!!
@@ -70,6 +68,8 @@ class MostPopularTvShowsAdaptor(tvListener: TvListener) :
                     tvShows[layoutPosition]
                 )
             })
+
+
         }
 
 
@@ -78,6 +78,7 @@ class MostPopularTvShowsAdaptor(tvListener: TvListener) :
 
     interface TvListener {
         fun handleTVPress(ClickedShow: TvShowsItem)
+
     }
 
 }

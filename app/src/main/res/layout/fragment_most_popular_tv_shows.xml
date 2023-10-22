@@ -34,6 +34,15 @@
                 android:layout_margin="@dimen/_8sdp"
                 />
 
+            <ImageView
+                android:layout_weight="1"
+                android:id="@+id/FavImage"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_baseline_watch_later_24"
+                android:layout_margin="@dimen/_8sdp"
+                />
+
         </LinearLayout>
 
 

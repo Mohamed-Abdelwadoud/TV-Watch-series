@@ -1,6 +1,5 @@
 package com.example.tvwatchseries.viewModels
 
-import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.example.tvwatchseries.data.model.MostPopularResponse

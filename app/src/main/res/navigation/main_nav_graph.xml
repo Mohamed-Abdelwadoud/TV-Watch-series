@@ -16,6 +16,9 @@
         <action
             android:id="@+id/action_mostPopularTvShowsFragment_to_searchFragment"
             app:destination="@id/searchFragment" />
+        <action
+            android:id="@+id/action_mostPopularTvShowsFragment_to_favTvShowFragment2"
+            app:destination="@id/favTvShowFragment" />
     </fragment>
     <fragment
         android:id="@+id/detailedTvShowFragment"
@@ -33,6 +36,15 @@
         tools:layout="@layout/fragment_search" >
         <action
             android:id="@+id/action_searchFragment_to_detailedTvShowFragment"
+            app:destination="@id/detailedTvShowFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/favTvShowFragment"
+        android:name="com.example.tvwatchseries.ui.FavTvShowFragment"
+        android:label="fragment_fav_tv_show"
+        tools:layout="@layout/fragment_fav_tv_show" >
+        <action
+            android:id="@+id/action_favTvShowFragment_to_detailedTvShowFragment"
             app:destination="@id/detailedTvShowFragment" />
     </fragment>
 </navigation>
