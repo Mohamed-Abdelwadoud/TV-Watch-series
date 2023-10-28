@@ -1,9 +1,11 @@
 package com.example.tvwatchseries.ui
 
+import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.graphics.drawable.BitmapDrawable
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -74,7 +76,7 @@ class MostPopularTvShowsFragment : Fragment(), TvShowsAdaptor.TvListener {
     }
 
     private fun initUI() {
-
+//
         mMostPopularTvShowsViewModel =
             ViewModelProvider(this)[MostPopularTvShowsViewModel::class.java]
         tvShowsAdaptor = TvShowsAdaptor(this)
@@ -110,15 +112,14 @@ class MostPopularTvShowsFragment : Fragment(), TvShowsAdaptor.TvListener {
                         tvShowsAdaptor.addList(response.tvShows as ArrayList<TvShowsItem>?)
                     }
 
-                }else{
-                    Toast.makeText(context,"Connection Lost",Toast.LENGTH_SHORT).show()
+                } else {
+                    Toast.makeText(context, "Connection Lost", Toast.LENGTH_SHORT).show()
 
                 }
                 binding.loadingBar.visibility = View.GONE
 
             }
         }
-
 
     }
 
@@ -163,7 +164,7 @@ class MostPopularTvShowsFragment : Fragment(), TvShowsAdaptor.TvListener {
                         isCurrentlyActive
                     )
                         .addSwipeLeftActionIcon(R.drawable.ic_baseline_watch_later_24)
-                        .addSwipeLeftLabel("SaveTo Watch List")
+                        .addSwipeLeftLabel("add To Watch List")
                         .addSwipeLeftBackgroundColor(Color.White.toArgb())
                         .create()
                         .decorate()
@@ -185,7 +186,6 @@ class MostPopularTvShowsFragment : Fragment(), TvShowsAdaptor.TvListener {
 
         itemTouchHelper.attachToRecyclerView(binding.tvShowsRecyclerView)
     }
-
 
 
     override fun handleTVPress(ClickedShow: TvShowsItem) {
@@ -218,6 +218,12 @@ class MostPopularTvShowsFragment : Fragment(), TvShowsAdaptor.TvListener {
             )
         )
 
+    }
+
+    // so when user leave this fragment page reset to top
+    override fun onPause() {
+        super.onPause()
+        currentPage = 1
     }
 
 
