@@ -1,15 +1,27 @@
 package com.example.tvwatchseries.ui
 
+import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.graphics.drawable.BitmapDrawable
+import android.graphics.drawable.Drawable
 import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
+import android.util.Log
+import android.view.KeyEvent
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.inputmethod.EditorInfo
+import android.view.inputmethod.InputMethodManager
+import android.widget.Toast
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
+import androidx.core.content.ContextCompat
+import androidx.core.content.ContextCompat.getSystemService
+import androidx.core.widget.addTextChangedListener
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.Navigation
 import androidx.recyclerview.widget.ItemTouchHelper
@@ -32,8 +44,8 @@ class SearchFragment : Fragment(), TvShowsAdaptor.TvListener {
     private lateinit var mSearchViewModel: SearchViewModel
     private var currentPage = 1
     private lateinit var mFavTvShowsViewModel: FavTvShowsViewModel
-
     private var totalAvailablePages = 1
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -41,10 +53,7 @@ class SearchFragment : Fragment(), TvShowsAdaptor.TvListener {
 
     }
 
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_search, container, false)
     }
@@ -54,14 +63,46 @@ class SearchFragment : Fragment(), TvShowsAdaptor.TvListener {
         binding = FragmentSearchBinding.bind(view)
         initUI()
 
-        binding.searchImage.setOnClickListener(View.OnClickListener {
+        binding.searchEditText.addTextChangedListener(object : TextWatcher {
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                if (s?.isNotEmpty() == true) {
+                    binding.clearIcon.visibility = View.VISIBLE
+                    getResult(s.toString())
+                } else if (s?.isEmpty() == true) {
+                    binding.clearIcon.visibility = View.INVISIBLE
+
+                }
+            }
+
+            override fun afterTextChanged(s: Editable?) {}
+        })
+
+        binding.searchEditText.setOnEditorActionListener { textView, actionId, event ->
+            if (actionId == EditorInfo.IME_ACTION_SEARCH) {
+                if (binding.searchEditText.text.toString().trim().isNotEmpty()) {
+                    getResult(binding.searchEditText.text.toString().trim())
+                    binding.loadingBar.visibility = View.VISIBLE
+                    binding.tvShowsRecyclerView.visibility = View.GONE
+                }
+                return@setOnEditorActionListener true
+            }
+            return@setOnEditorActionListener false
+        }
+
+        binding.searchImage.setOnClickListener {
             input = binding.searchEditText.text.toString().trim()
             if (input.isNotEmpty()) {
                 getResult(input)
-                binding.loadingBar.visibility=View.VISIBLE
-                binding.tvShowsRecyclerView.visibility=View.GONE
+                binding.loadingBar.visibility = View.VISIBLE
+                binding.tvShowsRecyclerView.visibility = View.GONE
             }
-        })
+        }
+
+        binding.clearIcon.setOnClickListener {
+            binding.searchEditText.text.clear()
+        }
+
 
     }
 
@@ -95,26 +136,25 @@ class SearchFragment : Fragment(), TvShowsAdaptor.TvListener {
         mSearchViewModel.getSearchTVShows(input, currentPage)?.observe(this) { response ->
             if (response != null) {
                 totalAvailablePages = response.total!!
-                if (response.tvShows?.isNotEmpty() == true) {
+                if (!response.tvShows.isNullOrEmpty()) {
                     tvShowsAdaptor.setList((response.tvShows as ArrayList<TvShowsItem>?)!!)
-                    binding.loadingBar.visibility=View.GONE
-                    binding.tvShowsRecyclerView.visibility=View.VISIBLE
+                    binding.tvShowsRecyclerView.visibility = View.VISIBLE
+                }else{
+                    Toast.makeText(context,"Not Found",Toast.LENGTH_SHORT).show()
                 }
+            } else {
+                Toast.makeText(context,"Connection Lost",Toast.LENGTH_SHORT).show()
             }
+            binding.loadingBar.visibility = View.GONE
 
         }
+
+
     }
 
-    override fun handleTVPress(ClickedShow: TvShowsItem) {
-        Navigation.findNavController(requireView()).navigate(
-            SearchFragmentDirections.actionSearchFragmentToDetailedTvShowFragment(
-                ClickedShow
-            )
-        )
-    }
 
     private fun setSwipe() {
-        var simpleCallBack: ItemTouchHelper.SimpleCallback =
+        val simpleCallBack: ItemTouchHelper.SimpleCallback =
             object :
                 ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT) {
 
@@ -175,6 +215,7 @@ class SearchFragment : Fragment(), TvShowsAdaptor.TvListener {
 
         itemTouchHelper.attachToRecyclerView(binding.tvShowsRecyclerView)
     }
+
     private fun saveToWatchList(binding: ItemContainerTvShowBinding) {
 
         mFavTvShowsViewModel = ViewModelProvider(this)[FavTvShowsViewModel::class.java]
@@ -196,6 +237,14 @@ class SearchFragment : Fragment(), TvShowsAdaptor.TvListener {
             )
         )
 
+    }
+    override fun handleTVPress(ClickedShow: TvShowsItem) {
+        Log.d("DDDDDDDDDDDDDDD", "handleTVPress: ${ClickedShow.id}")
+        Navigation.findNavController(requireView()).navigate(
+            SearchFragmentDirections.actionSearchFragmentToDetailedTvShowFragment(
+                ClickedShow
+            )
+        )
     }
 
 
