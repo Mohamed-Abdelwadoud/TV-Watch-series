@@ -1,6 +1,7 @@
 package com.example.tvwatchseries.util
 
 import android.widget.ImageView
+import com.example.tvwatchseries.R
 import com.squareup.picasso.Callback
 import com.squareup.picasso.Picasso
 
@@ -16,6 +17,7 @@ object FetchImageUrl {
                     }
 
                     override fun onError(e: Exception?) {
+                        view.setImageResource(R.drawable.ic_baseline_live_tv_24)
 
                     }
                 })

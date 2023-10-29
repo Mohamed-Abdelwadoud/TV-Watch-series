@@ -1,5 +1,6 @@
 package com.example.tvwatchseries.ui.adaptors
 
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -18,14 +19,12 @@ class TvShowsAdaptor(tvListener: TvListener) :
 
     private var tvShows: ArrayList<TvShowsItem> = ArrayList()
 
-
     fun addList(list: ArrayList<TvShowsItem>?) {
         if (tvShows.isEmpty()) {
             tvShows = list!!
         } else {
             tvShows.addAll(list!!)
         }
-
         notifyDataSetChanged()
     }
 
@@ -55,30 +54,24 @@ class TvShowsAdaptor(tvListener: TvListener) :
     }
 
     override fun getItemCount(): Int {
-        return tvShows.size ?: 0
+        return tvShows.size
     }
 
 
     inner class ItemTVHolder(val binding: ItemContainerTvShowBinding) :
         RecyclerView.ViewHolder(binding.root) {
-
         init {
             binding.root.setOnClickListener(View.OnClickListener {
                 mListener.handleTVPress(
                     tvShows[layoutPosition]
                 )
             })
-
-
         }
-
-
     }
 
 
     interface TvListener {
         fun handleTVPress(ClickedShow: TvShowsItem)
-
     }
 
 }

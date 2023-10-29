@@ -60,17 +60,17 @@ class MostPopularTvShowsFragment : Fragment(), TvShowsAdaptor.TvListener {
         binding = FragmentMostPopularTvShowsBinding.bind(view)
         initUI()
 
-        binding.searchImage.setOnClickListener(View.OnClickListener {
+        binding.searchImage.setOnClickListener {
             findNavController(requireView()).navigate(
                 MostPopularTvShowsFragmentDirections.actionMostPopularTvShowsFragmentToSearchFragment()
             )
-        })
+        }
 
-        binding.FavImage.setOnClickListener(View.OnClickListener {
+        binding.FavImage.setOnClickListener {
             findNavController(requireView()).navigate(
                 MostPopularTvShowsFragmentDirections.actionMostPopularTvShowsFragmentToFavTvShowFragment2()
             )
-        })
+        }
 
 
     }
@@ -125,7 +125,7 @@ class MostPopularTvShowsFragment : Fragment(), TvShowsAdaptor.TvListener {
 
 
     private fun setSwipe() {
-        var simpleCallBack: ItemTouchHelper.SimpleCallback =
+        val simpleCallBack: ItemTouchHelper.SimpleCallback =
             object :
                 ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT) {
 

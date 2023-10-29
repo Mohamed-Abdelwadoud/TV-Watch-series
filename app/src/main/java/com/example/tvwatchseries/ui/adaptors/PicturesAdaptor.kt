@@ -1,5 +1,7 @@
 package com.example.tvwatchseries.ui.adaptors
 
+import android.graphics.BitmapFactory
+import android.util.Base64
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
@@ -8,9 +10,9 @@ import com.example.tvwatchseries.util.FetchImageUrl
 import com.squareup.picasso.Callback
 import com.squareup.picasso.Picasso
 
-class PicturesAdaptor(picArray: ArrayList<String>) :
+class PicturesAdaptor(picArray: List<String?>) :
     RecyclerView.Adapter<PicturesAdaptor.PicHolder>() {
-    private var picList: ArrayList<String> = picArray
+    private var picList: List<String?> = picArray
 
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PicHolder {
@@ -20,7 +22,19 @@ class PicturesAdaptor(picArray: ArrayList<String>) :
     }
 
     override fun onBindViewHolder(holder: PicHolder, position: Int) {
-        FetchImageUrl.getImageURL(holder.binding.imageShow, picList[position])
+        if (picList[position]!!.startsWith("https", true)){
+            FetchImageUrl.getImageURL(holder.binding.imageShow, picList[position]!!)
+
+        }else{
+            val byteArray: ByteArray = Base64.decode(picList[position]!!, Base64.DEFAULT)
+            holder.binding.imageShow.setImageBitmap(
+                BitmapFactory.decodeByteArray(
+                    byteArray,
+                    0,
+                    byteArray.size
+                )
+            )
+        }
     }
 
     override fun getItemCount(): Int {
