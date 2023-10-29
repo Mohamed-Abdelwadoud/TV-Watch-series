@@ -2,15 +2,20 @@ package com.example.tvwatchseries.ui
 
 import android.content.Intent
 import android.graphics.BitmapFactory
-import android.util.Base64
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
-import android.util.Log
+import android.os.Handler
+import android.os.Looper
+import android.text.Html
+import android.util.Base64
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.LinearLayout
+import android.widget.Toast
+import androidx.annotation.RequiresApi
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -22,10 +27,9 @@ import com.example.tvwatchseries.databinding.FragmentDetailedTvShowBinding
 import com.example.tvwatchseries.databinding.SheetDialogLayoutBinding
 import com.example.tvwatchseries.ui.adaptors.EpisodesAdapter
 import com.example.tvwatchseries.ui.adaptors.PicturesAdaptor
+import com.example.tvwatchseries.util.FetchImageUrl
 import com.example.tvwatchseries.viewModels.DetailedTVViewModel
 import com.google.android.material.bottomsheet.BottomSheetDialog
-import com.squareup.picasso.Callback
-import com.squareup.picasso.Picasso
 import java.util.*
 
 
@@ -33,14 +37,12 @@ class DetailedTvShowFragment : Fragment() {
     private lateinit var binding: FragmentDetailedTvShowBinding
     private lateinit var detailedTVViewModel: DetailedTVViewModel
     private lateinit var clicked: TvShowsItem
-    private val timer = Timer()
-    private var maxCount = 0
 
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         // Inflate the layout for this fragment
         binding = FragmentDetailedTvShowBinding.inflate(layoutInflater)
         detailedTVViewModel = DetailedTVViewModel()
@@ -54,51 +56,74 @@ class DetailedTvShowFragment : Fragment() {
 
         initMainCard()
 
-        getApiCall()
+        getTvShowDetails()
 
 
     }
 
 
-    private fun getApiCall() {
+    private fun getTvShowDetails() {
+
         detailedTVViewModel.getTVDetails(clicked.id.toString())?.observe(this) { response ->
             if (response != null) {
+                binding.tipProgressBar.visibility = View.GONE
                 if (response.tvShow?.pictures?.isNotEmpty() == true) {
                     initViewPAger(response.tvShow.pictures)
                     binding.picturesViewPager.visibility = View.VISIBLE
                     binding.linearSliderIndicators.visibility = View.VISIBLE
+                } else {
+                    // we place the imageThumbnailPath to view pager
+                    initViewPAger(listOf(clicked.imageThumbnailPath))
                 }
-                if (!response.tvShow?.countdown.toString().isNullOrEmpty()) {
+                if (response.tvShow?.countdown.toString().isNotEmpty()) {
                     binding.textRunTime.text = response.tvShow?.runtime.toString()
                     binding.textRunTime.append(" Min")
+                } else {
+                    binding.textRunTime.text = "not available"
                 }
-                if (response.tvShow?.rating?.isNullOrEmpty() == false) {
+                if (response.tvShow?.rating?.isEmpty() == false) {
                     binding.textrating.text = kotlin.String.format(
                         Locale.getDefault(),
                         "%.2f", response.tvShow.rating.toDouble()
                     )
 
+                } else {
+                    binding.textrating.text = "not available"
                 }
-                if (response.tvShow?.genres?.isNullOrEmpty() == false) {
+                if (response.tvShow?.genres?.isEmpty() == false) {
                     binding.textGenres.text = response.tvShow.genres[0]
                 } else {
-                    binding.textGenres.text = "NA"
+                    binding.textGenres.text = "not available"
                 }
+                // handle special characters
+                if (!response.tvShow?.description.isNullOrEmpty()) {
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                        binding.testDescription.text =
+                            Html.fromHtml(response.tvShow?.description, Html.FROM_HTML_MODE_LEGACY)
+                    } else {
+                        response.tvShow?.description?.replace("<br>", "\n")
+                            ?.replace("\r", "")?.replace("\t", "    ")
+                            ?.replace("<b>", "**")?.replace("</b>", "**")
+                    }
 
-                binding.testDescription.text = response.tvShow?.description
 
-                if (!response.tvShow?.url.isNullOrEmpty()) {
-                    binding.buttonWebSite.setOnClickListener {
+                } else {
+                    binding.testDescription.text = "not available"
+                }
+                binding.buttonWebSite.setOnClickListener {
+                    if (!response.tvShow?.url.isNullOrEmpty()) {
                         val intent = Intent(Intent.ACTION_VIEW)
                         intent.data = Uri.parse(
                             response.tvShow?.url
                         )
                         startActivity(intent)
+                    } else {
+                        Toast.makeText(context, "not available", Toast.LENGTH_SHORT).show()
                     }
-                }
 
-                if (!response.tvShow?.episodes.isNullOrEmpty()) {
-                    binding.buttonEpisodes.setOnClickListener(View.OnClickListener {
+                }
+                binding.buttonEpisodes.setOnClickListener {
+                    if (!response.tvShow?.episodes.isNullOrEmpty()) {
                         val bottomSheetDialog = context?.let { it1 -> BottomSheetDialog(it1) }
                         val sheetDialogBinding = SheetDialogLayoutBinding.inflate(layoutInflater)
                         sheetDialogBinding.topNAme.text = "${clicked.name} Episodes"
@@ -109,8 +134,26 @@ class DetailedTvShowFragment : Fragment() {
                         bottomSheetDialog?.setContentView(sheetDialogBinding.root)
                         bottomSheetDialog?.show()
 
-                    })
+                    } else {
+                        Toast.makeText(context, "not available", Toast.LENGTH_SHORT).show()
+
+                    }
                 }
+            } else {
+                Toast.makeText(context, "Time Out", Toast.LENGTH_SHORT).show()
+                binding.textrating.text = "not available"
+                binding.testDescription.text = "not available"
+                binding.textRunTime.text = "not available"
+                binding.textGenres.text = "not available"
+                binding.tipProgressBar.visibility = View.GONE
+                initViewPAger(listOf(clicked.imageThumbnailPath))
+                binding.buttonEpisodes.setOnClickListener {
+                    Toast.makeText(context, "not available", Toast.LENGTH_SHORT).show()
+                }
+                binding.buttonWebSite.setOnClickListener {
+                    Toast.makeText(context, "not available", Toast.LENGTH_SHORT).show()
+                }
+
 
             }
         }
@@ -119,19 +162,24 @@ class DetailedTvShowFragment : Fragment() {
 
 
     private fun initViewPAger(pictures: List<String?>?) {
-        val adapter = PicturesAdaptor(pictures as ArrayList<String>)
-        binding.picturesViewPager.adapter = adapter
-        setupSliderIndicator(pictures.size)
+        if (pictures != null) {
+            val adapter = PicturesAdaptor(pictures)
+            binding.picturesViewPager.adapter = adapter
+            if (pictures.size > 1) {
+                setupSliderIndicator(pictures.size)
+                binding.picturesViewPager.registerOnPageChangeCallback(object :
+                    OnPageChangeCallback() {
+                    override fun onPageSelected(position: Int) {
+                        super.onPageSelected(position)
+                        setCurrentSliderIndicator(position)
+                    }
+                })
+                autoSliding(pictures.size)
 
-        binding.picturesViewPager.registerOnPageChangeCallback(object :
-            OnPageChangeCallback() {
-            override fun onPageSelected(position: Int) {
-                super.onPageSelected(position)
-                autoSliding((pictures.size))
-                maxCount = pictures.size
-                setCurrentSliderIndicator(position)
+
             }
-        })
+        }
+
     }
 
     private fun setupSliderIndicator(count: Int) {
@@ -178,21 +226,27 @@ class DetailedTvShowFragment : Fragment() {
         }
     }
 
-
     private fun autoSliding(max: Int) {
-        var currentPage = binding.picturesViewPager.currentItem
-        val autoScrollInterval = 3000 // Delay in milliseconds
+        val autoScrollInterval = 3000
+        val firstDelay = 3000 // Delay in milliseconds
 
+        val timer = Timer()
         timer.schedule(object : TimerTask() {
             override fun run() {
                 activity?.runOnUiThread {
-                    if (currentPage == max) {
-                        currentPage = 0
+                    if (binding.picturesViewPager.currentItem == (max - 1)) {
+                        binding.picturesViewPager.setCurrentItem(0, false)
+                    } else {
+                        binding.picturesViewPager.setCurrentItem(
+                            binding.picturesViewPager.currentItem + 1,
+                            false
+                        )
+
                     }
-                    binding.picturesViewPager.setCurrentItem(currentPage++, false)
+
                 }
             }
-        }, 0, autoScrollInterval.toLong())
+        }, firstDelay.toLong(), autoScrollInterval.toLong())
 
     }
 
@@ -202,29 +256,26 @@ class DetailedTvShowFragment : Fragment() {
         binding.tvMainData.textStarted.text = clicked.startDate
         binding.tvMainData.textStatus.text = clicked.status
         binding.tvMainData.textName.text = clicked.name
-        if (clicked.imageThumbnailPath?.startsWith("https",true) == true){
-            try {
-                binding.tvMainData.imageTvShow.alpha = 0f
-                Picasso.get().load(clicked.imageThumbnailPath).noFade()
-                    .into(binding.tvMainData.imageTvShow, object :
-                        Callback {
-                        override fun onSuccess() {
-                            binding.tvMainData.imageTvShow.animate().setDuration(300).alpha(1f).start()
-                        }
+        if (!clicked.imageThumbnailPath.isNullOrEmpty()) {
+            if (clicked.imageThumbnailPath?.startsWith("https", true) == true) {
+                FetchImageUrl.getImageURL(
+                    binding.tvMainData.imageTvShow,
+                    clicked.imageThumbnailPath!!
+                )
+            } else {
+                val byteArray: ByteArray = Base64.decode(clicked.imageThumbnailPath, Base64.DEFAULT)
+                binding.tvMainData.imageTvShow.setImageBitmap(
+                    BitmapFactory.decodeByteArray(
+                        byteArray,
+                        0,
+                        byteArray.size
+                    )
+                )
 
-                        override fun onError(e: Exception?) {
-                        }
-                    })
-            } catch (ignored: Exception) {
+
             }
-        }else{
-            val byteArray: ByteArray = Base64.decode(clicked.imageThumbnailPath, Base64.DEFAULT)
-            binding.tvMainData.imageTvShow.setImageBitmap(BitmapFactory.decodeByteArray(byteArray, 0, byteArray.size))
-
 
         }
-
-
 
     }
 

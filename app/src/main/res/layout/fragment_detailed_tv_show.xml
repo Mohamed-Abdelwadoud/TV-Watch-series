@@ -7,13 +7,29 @@
     android:layout_height="match_parent"
     tools:context=".ui.DetailedTvShowFragment">
 
+    <ProgressBar
+        android:id="@+id/tipProgressBar"
+        android:layout_width="@dimen/_100sdp"
+        android:layout_height="@dimen/_100sdp"
+        android:visibility="visible"
+        android:layout_marginBottom="@dimen/_20sdp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
     <ScrollView
+
         android:layout_width="match_parent"
         android:layout_height="match_parent">
         <androidx.constraintlayout.widget.ConstraintLayout
+
             android:layout_width="match_parent"
             android:layout_height="match_parent">
+
+
+
             <androidx.viewpager2.widget.ViewPager2
+
                 android:id="@+id/picturesViewPager"
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/_200sdp"
@@ -23,7 +39,9 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.0"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+                app:layout_constraintTop_toTopOf="parent" >
+
+            </androidx.viewpager2.widget.ViewPager2>
 
             <androidx.appcompat.widget.LinearLayoutCompat
 
@@ -53,11 +71,10 @@
                 app:layout_constraintTop_toTopOf="parent" />
 
             <TextView
-                android:layout_margin="@dimen/_3sdp"
+                android:layout_marginStart="@dimen/_8sdp"
                 android:id="@+id/testDescription"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Description"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/LinerData"
@@ -69,6 +86,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 app:layout_constraintStart_toStartOf="parent"
+                android:padding="@dimen/_5sdp"
                 android:orientation="horizontal"
                 android:gravity="center_horizontal"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -85,31 +103,31 @@
                     android:id="@+id/textrating"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Rating:"/>
+                    />
                 <ImageView
-                    android:layout_marginStart="@dimen/_5sdp"
+                    android:layout_marginStart="@dimen/_8sdp"
                     android:layout_marginTop="@dimen/_4sdp"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:src="@drawable/indicator_off"/>
                 <TextView
-                    android:layout_marginStart="@dimen/_5sdp"
+                    android:layout_marginStart="@dimen/_8sdp"
                     android:id="@+id/textGenres"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="genres:"/>
+                    />
                 <ImageView
-                    android:layout_marginStart="@dimen/_5sdp"
+                    android:layout_marginStart="@dimen/_8sdp"
                     android:layout_marginTop="@dimen/_4sdp"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:src="@drawable/indicator_on"/>
                 <TextView
-                    android:layout_marginStart="@dimen/_10sdp"
+                    android:layout_marginStart="@dimen/_8sdp"
                     android:id="@+id/textRunTime"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="textRunTime:"/>
+                    />
 
 
             </LinearLayout>
@@ -130,10 +148,11 @@
                     android:text="Episodes"/>
                 <Button
                     android:id="@+id/buttonWebSite"
-                    android:layout_marginStart="@dimen/_50sdp"
+                    android:layout_marginStart="@dimen/_20sdp"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="WebSite"/>
+
 
             </LinearLayout>
         </androidx.constraintlayout.widget.ConstraintLayout>
