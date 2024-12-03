@@ -6,7 +6,7 @@
     android:background="@color/mainDark"
     android:orientation="vertical"
     android:layout_height="match_parent"
-    tools:context=".ui.SearchFragment">
+    tools:context=".presentation.screens.searchScreen.SearchFragment">
     <androidx.appcompat.widget.LinearLayoutCompat
         android:layout_marginTop="@dimen/_8sdp"
         android:orientation="horizontal"

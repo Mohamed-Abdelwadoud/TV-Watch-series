@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/mainDark"
-    tools:context=".ui.MostPopularTvShowsFragment">
+    tools:context=".presentation.screens.mostPopularTvShowsScreen.MostPopularTvShowsFragment">
 
 
         <LinearLayout
