@@ -17,6 +17,6 @@ interface TVShowDao {
     fun getAllTvShows(): LiveData<List<TVShowEntity>>
 
     @Query("delete from TVShowEntity where showID =:id")
-    suspend fun deleteTvShowById(id: String)
+    suspend fun deleteTvShowById(id: String) : Int
 
 }

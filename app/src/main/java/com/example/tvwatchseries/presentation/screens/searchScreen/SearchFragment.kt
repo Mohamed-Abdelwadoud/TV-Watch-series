@@ -2,6 +2,7 @@ package com.example.tvwatchseries.presentation.screens.searchScreen
 
 import android.graphics.Bitmap
 import android.graphics.Canvas
+import android.graphics.Color
 import android.graphics.drawable.BitmapDrawable
 import android.os.Bundle
 import android.text.Editable
@@ -12,9 +13,8 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
 import android.widget.Toast
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.toArgb
-import androidx.lifecycle.ViewModelProvider
+
+import androidx.fragment.app.viewModels
 import androidx.navigation.Navigation
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
@@ -25,16 +25,17 @@ import com.example.tvwatchseries.databinding.ItemContainerTvShowBinding
 import com.example.tvwatchseries.domain.model.TvShowsItemModel
 import com.example.tvwatchseries.presentation.adaptors.TvShowsAdaptor
 import com.example.tvwatchseries.presentation.screens.favoriteTvShowScreen.FavTvShowsViewModel
+import dagger.hilt.android.AndroidEntryPoint
 import it.xabaras.android.recyclerview.swipedecorator.RecyclerViewSwipeDecorator
 import java.io.ByteArrayOutputStream
-
+@AndroidEntryPoint
 class SearchFragment : Fragment(), TvShowsAdaptor.TvListener {
     private lateinit var binding: FragmentSearchBinding
     private var input: String = ""
     private lateinit var tvShowsAdaptor: TvShowsAdaptor
-    private lateinit var mSearchViewModel: SearchViewModel
+    private  val mSearchViewModel: SearchViewModel by viewModels()
     private var currentPage = 1
-    private lateinit var mFavTvShowsViewModel: FavTvShowsViewModel
+    private  val mFavTvShowsViewModel: FavTvShowsViewModel by viewModels()
     private var totalAvailablePages = 1
 
 
@@ -73,7 +74,7 @@ class SearchFragment : Fragment(), TvShowsAdaptor.TvListener {
             override fun afterTextChanged(s: Editable?) {}
         })
 
-        binding.searchEditText.setOnEditorActionListener { textView, actionId, event ->
+        binding.searchEditText.setOnEditorActionListener { _, actionId, _ ->
             if (actionId == EditorInfo.IME_ACTION_SEARCH) {
                 if (binding.searchEditText.text.toString().trim().isNotEmpty()) {
                     getResult(binding.searchEditText.text.toString().trim())
@@ -102,8 +103,6 @@ class SearchFragment : Fragment(), TvShowsAdaptor.TvListener {
     }
 
     private fun initUI() {
-        mSearchViewModel =
-            SearchViewModel()
         tvShowsAdaptor = TvShowsAdaptor(this)
         binding.tvShowsRecyclerView.adapter = tvShowsAdaptor
         binding.tvShowsRecyclerView.setHasFixedSize(true)
@@ -190,7 +189,7 @@ class SearchFragment : Fragment(), TvShowsAdaptor.TvListener {
                     )
                         .addSwipeLeftActionIcon(R.drawable.ic_baseline_watch_later_24)
                         .addSwipeLeftLabel("SaveTo Watch List")
-                        .addSwipeLeftBackgroundColor(Color.White.toArgb())
+                        .addSwipeLeftBackgroundColor(Color.WHITE)
                         .create()
                         .decorate()
 
@@ -213,8 +212,6 @@ class SearchFragment : Fragment(), TvShowsAdaptor.TvListener {
     }
 
     private fun saveToWatchList(binding: ItemContainerTvShowBinding) {
-
-        mFavTvShowsViewModel = ViewModelProvider(this)[FavTvShowsViewModel::class.java]
         val drawable = binding.imageTvShow.drawable
         val bitmap = (drawable as? BitmapDrawable)?.bitmap
         val byteArrayOutputStream = ByteArrayOutputStream()
@@ -235,10 +232,10 @@ class SearchFragment : Fragment(), TvShowsAdaptor.TvListener {
 
     }
 
-    override fun handleTVPress(tvShowsItem: TvShowsItemModel) {
+    override fun handleTVPress(tvShowItem: TvShowsItemModel) {
         Navigation.findNavController(requireView()).navigate(
             SearchFragmentDirections.actionSearchFragmentToDetailedTvShowFragment(
-                tvShowsItem
+                tvShowItem
             )
         )
     }

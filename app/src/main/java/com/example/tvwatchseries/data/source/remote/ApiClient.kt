@@ -3,34 +3,10 @@ package com.example.tvwatchseries.data.source.remote
 import com.example.tvwatchseries.data.model.DetailedResponse
 import com.example.tvwatchseries.data.model.MostPopularResponse
 import retrofit2.Call
-import retrofit2.Retrofit
-import retrofit2.converter.gson.GsonConverterFactory
+import javax.inject.Inject
 
-class ApiClient() :
+class ApiClient@Inject constructor(private val apiService: ApiService)  :
     RemoteSource {
-        lateinit var apiService: ApiService
-    //    companion object {
-//        private var instance: Retrofit? = null
-//        fun getRetrofitInstance(): Retrofit {
-//            if (instance == null) {
-//                instance = Retrofit.Builder()
-//                    .baseUrl("https://www.episodate.com/api/")
-//                    .addConverterFactory(GsonConverterFactory.create())
-//                    .build()
-//            }
-//            return instance!!
-//        }
-//    }
-
-    init {
-       apiService =   Retrofit.Builder()
-            .baseUrl("https://www.episodate.com/api/")
-            .addConverterFactory(GsonConverterFactory.create())
-            .build()
-
-            .create(ApiService::class.java)
-
-    }
 
     override fun getMostPopularTVShows(page: Int): Call<MostPopularResponse?>? {
         return apiService.getMostPopularTVShows(page)

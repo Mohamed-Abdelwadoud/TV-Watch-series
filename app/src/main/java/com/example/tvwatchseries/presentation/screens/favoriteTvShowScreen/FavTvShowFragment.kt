@@ -1,16 +1,15 @@
 package com.example.tvwatchseries.presentation.screens.favoriteTvShowScreen
 
 import android.graphics.Canvas
+import android.graphics.Color
 import android.os.Bundle
 import android.util.Base64
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.toArgb
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.Navigation
 import androidx.recyclerview.widget.ItemTouchHelper
@@ -18,20 +17,21 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.tvwatchseries.R
 import com.example.tvwatchseries.data.model.TVShowEntity
-import com.example.tvwatchseries.data.model.TvShowsItem
 import com.example.tvwatchseries.databinding.FragmentFavTvShowBinding
 import com.example.tvwatchseries.databinding.ItemContainerTvShowBinding
 import com.example.tvwatchseries.domain.model.TvShowsItemModel
 import com.example.tvwatchseries.presentation.adaptors.FavTvShowsAdaptor
+import com.example.tvwatchseries.presentation.screens.favoriteTvShowScreen.FavTvShowFragmentDirections
+import dagger.hilt.android.AndroidEntryPoint
 import it.xabaras.android.recyclerview.swipedecorator.RecyclerViewSwipeDecorator
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
-
+@AndroidEntryPoint
 class FavTvShowFragment : Fragment(), FavTvShowsAdaptor.FavTvShowListener {
     private lateinit var binding: FragmentFavTvShowBinding
     private lateinit var mTvShowsAdaptor: FavTvShowsAdaptor
-    private lateinit var mFavTvShowsViewModel: FavTvShowsViewModel
+    private  val mFavTvShowsViewModel: FavTvShowsViewModel by viewModels()
 
 
     override fun onCreateView(
@@ -55,7 +55,6 @@ class FavTvShowFragment : Fragment(), FavTvShowsAdaptor.FavTvShowListener {
         mTvShowsAdaptor = FavTvShowsAdaptor(this)
         binding.favRecyclerView.layoutManager = LinearLayoutManager(context)
         binding.favRecyclerView.adapter = mTvShowsAdaptor
-        mFavTvShowsViewModel = ViewModelProvider(this)[FavTvShowsViewModel::class.java]
         mFavTvShowsViewModel.getFavTvShows.observe(viewLifecycleOwner, Observer { shows ->
             mTvShowsAdaptor.setFavList(shows)
         })
@@ -107,7 +106,7 @@ class FavTvShowFragment : Fragment(), FavTvShowsAdaptor.FavTvShowListener {
                     )
                         .addSwipeLeftActionIcon(R.drawable.ic_baseline_delete_24)
                         .addSwipeLeftLabel("Delete")
-                        .addSwipeLeftBackgroundColor(Color.White.toArgb())
+                        .addSwipeLeftBackgroundColor(Color.WHITE)
                         .create()
                         .decorate()
 
@@ -142,16 +141,17 @@ class FavTvShowFragment : Fragment(), FavTvShowsAdaptor.FavTvShowListener {
         Navigation.findNavController(requireView()).navigate(
             FavTvShowFragmentDirections.actionFavTvShowFragmentToDetailedTvShowFragment(
                 TvShowsItemModel(
-                    null,
-                    null,
-                    Base64.encodeToString(tvShowEntity.showImageBytearray, Base64.DEFAULT),
-                    tvShowEntity.showName,
-                    tvShowEntity.showID.toInt(),
-                    null,
-                    tvShowEntity.showStartDate,
-                    tvShowEntity.showNetwork,
-                    tvShowEntity.showStatus
+                    endDate = tvShowEntity,
+                    country = null,
+                    imageThumbnailPath =  Base64.encodeToString(tvShowEntity.showImageBytearray, Base64.DEFAULT),
+                   name =  tvShowEntity.showName,
+                   id =  tvShowEntity.showID.toInt(),
+                   permalink = null,
+                   startDate =  tvShowEntity.showStartDate,
+                   network =  tvShowEntity.showNetwork,
+                    status = tvShowEntity.showStatus
                 )
+
             )
         )
 

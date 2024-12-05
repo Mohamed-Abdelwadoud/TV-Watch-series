@@ -2,36 +2,35 @@ package com.example.tvwatchseries.presentation.screens.mostPopularTvShowsScreen
 
 import android.graphics.Bitmap
 import android.graphics.Canvas
+import android.graphics.Color
 import android.graphics.drawable.BitmapDrawable
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.toArgb
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModelProvider
+import androidx.fragment.app.viewModels
 import androidx.navigation.Navigation.findNavController
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
 import com.example.tvwatchseries.R
 import com.example.tvwatchseries.data.model.TVShowEntity
-import com.example.tvwatchseries.data.model.TvShowsItem
 import com.example.tvwatchseries.databinding.FragmentMostPopularTvShowsBinding
 import com.example.tvwatchseries.databinding.ItemContainerTvShowBinding
 import com.example.tvwatchseries.domain.model.TvShowsItemModel
 import com.example.tvwatchseries.presentation.adaptors.TvShowsAdaptor
 import com.example.tvwatchseries.presentation.screens.favoriteTvShowScreen.FavTvShowsViewModel
+import dagger.hilt.android.AndroidEntryPoint
 import it.xabaras.android.recyclerview.swipedecorator.RecyclerViewSwipeDecorator
 import java.io.ByteArrayOutputStream
 
-
+@AndroidEntryPoint
 class MostPopularTvShowsFragment : Fragment(), TvShowsAdaptor.TvListener {
     private lateinit var binding: FragmentMostPopularTvShowsBinding
     private lateinit var tvShowsAdaptor: TvShowsAdaptor
-    private lateinit var mMostPopularTvShowsViewModel: MostPopularTvShowsViewModel
-    private lateinit var mFavTvShowsViewModel: FavTvShowsViewModel
+    private val mMostPopularTvShowsViewModel by viewModels<MostPopularTvShowsViewModel>()
+    private val mFavTvShowsViewModel by viewModels<FavTvShowsViewModel>()
     private var currentPage = 1
     private var totalAvailablePages = 1
 
@@ -74,9 +73,6 @@ class MostPopularTvShowsFragment : Fragment(), TvShowsAdaptor.TvListener {
     }
 
     private fun initUI() {
-//
-        mMostPopularTvShowsViewModel = MostPopularTvShowsViewModel()
-
         tvShowsAdaptor = TvShowsAdaptor(this)
         binding.tvShowsRecyclerView.adapter = tvShowsAdaptor
         binding.tvShowsRecyclerView.setHasFixedSize(true)
@@ -164,7 +160,7 @@ class MostPopularTvShowsFragment : Fragment(), TvShowsAdaptor.TvListener {
                     )
                         .addSwipeLeftActionIcon(R.drawable.ic_baseline_watch_later_24)
                         .addSwipeLeftLabel("add To Watch List")
-                        .addSwipeLeftBackgroundColor(Color.White.toArgb())
+                        .addSwipeLeftBackgroundColor(Color.WHITE)
                         .create()
                         .decorate()
 
@@ -187,18 +183,16 @@ class MostPopularTvShowsFragment : Fragment(), TvShowsAdaptor.TvListener {
     }
 
 
-    override fun handleTVPress(tvShow: TvShowsItemModel) {
+    override fun handleTVPress(tvShowItem: TvShowsItemModel) {
         findNavController(requireView()).navigate(
             MostPopularTvShowsFragmentDirections.actionMostPopularTvShowsFragmentToDetailedTvShowFragment(
-                tvShow
+                tvShowItem
             )
         )
     }
 
 
     private fun saveToWatchList(binding: ItemContainerTvShowBinding) {
-
-        mFavTvShowsViewModel = ViewModelProvider(this)[FavTvShowsViewModel::class.java]
         val drawable = binding.imageTvShow.drawable
         val bitmap = (drawable as? BitmapDrawable)?.bitmap
         val byteArrayOutputStream = ByteArrayOutputStream()

@@ -4,7 +4,7 @@ import androidx.room.Entity
 import androidx.room.PrimaryKey
 
 @Entity
-class TVShowEntity(
+data class TVShowEntity(
     @PrimaryKey  var showID: String,
     var showName: String?,
     var showStartDate: String?,

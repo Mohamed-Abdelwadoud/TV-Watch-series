@@ -3,7 +3,6 @@ package com.example.tvwatchseries.presentation.adaptors
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import androidx.recyclerview.widget.RecyclerView.ViewHolder
 import com.example.tvwatchseries.data.model.EpisodesItem
 import com.example.tvwatchseries.databinding.EpisodeLayoutBinding
 

@@ -15,6 +15,7 @@ import android.widget.LinearLayout
 import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.viewpager2.widget.ViewPager2.OnPageChangeCallback
 import com.example.tvwatchseries.R
@@ -26,12 +27,13 @@ import com.example.tvwatchseries.presentation.adaptors.EpisodesAdapter
 import com.example.tvwatchseries.presentation.adaptors.PicturesAdaptor
 import com.example.tvwatchseries.presentation.util.FetchImageUrl
 import com.google.android.material.bottomsheet.BottomSheetDialog
+import dagger.hilt.android.AndroidEntryPoint
 import java.util.*
 
-
+@AndroidEntryPoint
 class DetailedTvShowFragment : Fragment() {
     private lateinit var binding: FragmentDetailedTvShowBinding
-    private lateinit var detailedTVViewModel: DetailedTVViewModel
+    private val detailedTVViewModel: DetailedTVViewModel by viewModels()
     private lateinit var tvShowItem: TvShowsItemModel
 
 
@@ -41,9 +43,7 @@ class DetailedTvShowFragment : Fragment() {
     ): View {
         // Inflate the layout for this fragment
         binding = FragmentDetailedTvShowBinding.inflate(layoutInflater)
-//        detailedTVViewModel = ViewModelProvider(this)[DetailedTVViewModel::class.java]
 
-        detailedTVViewModel = DetailedTVViewModel()
         return binding.root
     }
 
@@ -82,7 +82,7 @@ class DetailedTvShowFragment : Fragment() {
                     binding.textRunTime.text = "not available"
                 }
                 if (response.tvShow?.rating?.isEmpty() == false) {
-                    binding.textrating.text = kotlin.String.format(
+                    binding.textrating.text = String.format(
                         Locale.getDefault(),
                         "%.2f", response.tvShow.rating.toDouble()
                     )

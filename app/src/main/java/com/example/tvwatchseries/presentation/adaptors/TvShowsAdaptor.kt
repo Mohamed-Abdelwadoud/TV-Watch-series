@@ -1,6 +1,5 @@
 package com.example.tvwatchseries.presentation.adaptors
 
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -29,7 +28,7 @@ class TvShowsAdaptor(tvListener: TvListener) :
     }
 
     fun setList(list: ArrayList<TvShowsItemModel>) {
-        tvShows = list!!
+        tvShows = list
         notifyDataSetChanged()
     }
 
@@ -61,11 +60,11 @@ class TvShowsAdaptor(tvListener: TvListener) :
     inner class ItemTVHolder(val binding: ItemContainerTvShowBinding) :
         RecyclerView.ViewHolder(binding.root) {
         init {
-            binding.root.setOnClickListener(View.OnClickListener {
+            binding.root.setOnClickListener {
                 mListener.handleTVPress(
                     tvShows[layoutPosition]
                 )
-            })
+            }
         }
     }
 
