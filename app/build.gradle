@@ -3,8 +3,7 @@ plugins {
     id 'org.jetbrains.kotlin.android'
     id 'androidx.navigation.safeargs'
     id 'kotlin-kapt'
-
-
+    id 'com.google.dagger.hilt.android'
 }
 
 android {
@@ -41,47 +40,40 @@ android {
 
 dependencies {
 
-    implementation 'androidx.core:core-ktx:1.7.0'
-    implementation 'androidx.appcompat:appcompat:1.6.1'
-    implementation 'com.google.android.material:material:1.10.0'
-    implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
+    implementation 'androidx.core:core-ktx:1.13.1'
+    implementation 'androidx.appcompat:appcompat:1.7.0'
+    implementation 'com.google.android.material:material:1.12.0'
+    implementation 'androidx.constraintlayout:constraintlayout:2.2.0'
     testImplementation 'junit:junit:4.13.2'
-    androidTestImplementation 'androidx.test.ext:junit:1.1.5'
-    androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
-}
+    androidTestImplementation 'androidx.test.ext:junit:1.2.1'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.6.1'
 // room
-dependencies {
-    def room_version = "2.5.2"
+    def room_version = "2.6.1"
     implementation("androidx.room:room-runtime:$room_version")
     annotationProcessor("androidx.room:room-compiler:$room_version")
     // To use Kotlin annotation processing tool (kapt)
-    kapt("androidx.room:room-compiler:$room_version")
+    kapt "androidx.room:room-compiler:$room_version"
     implementation("androidx.room:room-ktx:$room_version")
 
 
-
-    def lifecycle_version = "2.6.1"
+    def lifecycle_version = "2.8.7"
 
     // ViewModel
     implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:$lifecycle_version")
-    // ViewModel utilities for Compose
-    implementation("androidx.lifecycle:lifecycle-viewmodel-compose:$lifecycle_version")
     // LiveData
     implementation("androidx.lifecycle:lifecycle-livedata-ktx:$lifecycle_version")
 
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.6.4")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.8.1")
 
     // swipe ded
     implementation 'it.xabaras.android:recyclerview-swipedecorator:1.4'
-    //Gason
+    //Gson
     implementation 'com.google.code.gson:gson:2.10.1'
 
-}
 
 
 // navigation
-dependencies {
-    def nav_version = "2.7.4"
+    def nav_version = "2.8.4"
     implementation("androidx.navigation:navigation-fragment-ktx:$nav_version")
     implementation("androidx.navigation:navigation-ui-ktx:$nav_version")
     implementation("androidx.navigation:navigation-dynamic-features-fragment:$nav_version")
@@ -94,7 +86,6 @@ dependencies {
     //makerMan
     implementation 'com.makeramen:roundedimageview:2.3.0'
 
-    dependencies {
         // define a BOM and its version
         implementation(platform("com.squareup.okhttp3:okhttp-bom:4.10.0"))
 
@@ -109,10 +100,17 @@ dependencies {
         implementation 'com.squareup.picasso:picasso:2.71828'
 
 
-    }
-    //swipe
-    implementation 'it.xabaras.android:recyclerview-swipedecorator:1.4'
+
+    // dagger hilt
+        implementation("com.google.dagger:hilt-android:2.50")
+        kapt("com.google.dagger:hilt-android-compiler:2.50")
 
 
 
+
+
+}
+
+kapt {
+    correctErrorTypes = true
 }
