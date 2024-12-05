@@ -1,14 +1,13 @@
 package com.example.tvwatchseries.presentation.screens.favoriteTvShowScreen
 
 import android.graphics.Canvas
+import android.graphics.Color
 import android.os.Bundle
 import android.util.Base64
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.toArgb
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
@@ -18,7 +17,6 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.tvwatchseries.R
 import com.example.tvwatchseries.data.model.TVShowEntity
-import com.example.tvwatchseries.data.model.TvShowsItem
 import com.example.tvwatchseries.databinding.FragmentFavTvShowBinding
 import com.example.tvwatchseries.databinding.ItemContainerTvShowBinding
 import com.example.tvwatchseries.domain.model.TvShowsItemModel
@@ -107,7 +105,7 @@ class FavTvShowFragment : Fragment(), FavTvShowsAdaptor.FavTvShowListener {
                     )
                         .addSwipeLeftActionIcon(R.drawable.ic_baseline_delete_24)
                         .addSwipeLeftLabel("Delete")
-                        .addSwipeLeftBackgroundColor(Color.White.toArgb())
+                        .addSwipeLeftBackgroundColor(Color.WHITE)
                         .create()
                         .decorate()
 

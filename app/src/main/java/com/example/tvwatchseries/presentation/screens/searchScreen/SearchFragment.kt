@@ -2,6 +2,7 @@ package com.example.tvwatchseries.presentation.screens.searchScreen
 
 import android.graphics.Bitmap
 import android.graphics.Canvas
+import android.graphics.Color
 import android.graphics.drawable.BitmapDrawable
 import android.os.Bundle
 import android.text.Editable
@@ -12,8 +13,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
 import android.widget.Toast
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.toArgb
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.Navigation
 import androidx.recyclerview.widget.ItemTouchHelper
@@ -190,7 +189,7 @@ class SearchFragment : Fragment(), TvShowsAdaptor.TvListener {
                     )
                         .addSwipeLeftActionIcon(R.drawable.ic_baseline_watch_later_24)
                         .addSwipeLeftLabel("SaveTo Watch List")
-                        .addSwipeLeftBackgroundColor(Color.White.toArgb())
+                        .addSwipeLeftBackgroundColor(Color.WHITE)
                         .create()
                         .decorate()
 
@@ -235,10 +234,10 @@ class SearchFragment : Fragment(), TvShowsAdaptor.TvListener {
 
     }
 
-    override fun handleTVPress(tvShowsItem: TvShowsItemModel) {
+    override fun handleTVPress(tvShowItem: TvShowsItemModel) {
         Navigation.findNavController(requireView()).navigate(
             SearchFragmentDirections.actionSearchFragmentToDetailedTvShowFragment(
-                tvShowsItem
+                tvShowItem
             )
         )
     }

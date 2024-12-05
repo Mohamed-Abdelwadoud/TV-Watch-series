@@ -2,14 +2,13 @@ package com.example.tvwatchseries.presentation.screens.mostPopularTvShowsScreen
 
 import android.graphics.Bitmap
 import android.graphics.Canvas
+import android.graphics.Color
 import android.graphics.drawable.BitmapDrawable
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.toArgb
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.Navigation.findNavController
@@ -17,7 +16,6 @@ import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
 import com.example.tvwatchseries.R
 import com.example.tvwatchseries.data.model.TVShowEntity
-import com.example.tvwatchseries.data.model.TvShowsItem
 import com.example.tvwatchseries.databinding.FragmentMostPopularTvShowsBinding
 import com.example.tvwatchseries.databinding.ItemContainerTvShowBinding
 import com.example.tvwatchseries.domain.model.TvShowsItemModel
@@ -164,7 +162,7 @@ class MostPopularTvShowsFragment : Fragment(), TvShowsAdaptor.TvListener {
                     )
                         .addSwipeLeftActionIcon(R.drawable.ic_baseline_watch_later_24)
                         .addSwipeLeftLabel("add To Watch List")
-                        .addSwipeLeftBackgroundColor(Color.White.toArgb())
+                        .addSwipeLeftBackgroundColor(Color.WHITE)
                         .create()
                         .decorate()
 
