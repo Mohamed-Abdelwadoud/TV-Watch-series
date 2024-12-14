@@ -2,15 +2,16 @@ package com.example.tvwatchseries.data.source.remote
 
 import com.example.tvwatchseries.data.model.DetailedResponse
 import com.example.tvwatchseries.data.model.MostPopularResponse
+import kotlinx.coroutines.flow.Flow
 import retrofit2.Call
 
 interface RemoteSource {
 
-    fun getMostPopularTVShows(page: Int): Call<MostPopularResponse?>?
+    suspend fun getMostPopularTVShows(page: Int): Flow<MostPopularResponse>
 
 
-    fun getTVShowDetails(tvShowId: String?): Call<DetailedResponse>?
+    suspend fun getTVShowDetails(tvShowId: String?): Flow<DetailedResponse>
 
-    fun searchTVShow(query: String?, page: Int): Call<MostPopularResponse?>?
+    suspend fun searchTVShow(query: String?, page: Int): Flow<MostPopularResponse>
 
 }

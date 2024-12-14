@@ -5,7 +5,7 @@ import com.google.gson.annotations.SerializedName
 data class MostPopularResponse(
 
 	@field:SerializedName("tv_shows")
-	val tvShows: List<TvShowsItem?>? = null,
+	val tvShows: List<TvShowsItem>? = null,
 
 	@field:SerializedName("total")
 	val total: Int? = null,
@@ -15,12 +15,14 @@ data class MostPopularResponse(
 
 	@field:SerializedName("page")
 	val page: Int? = null
-)
+):java.io.Serializable{
+
+}
 
 data class TvShowsItem(
 
 	@field:SerializedName("end_date")
-	val endDate: Any? = null,
+	val endDate: String? = null,
 
 	@field:SerializedName("country")
 	val country: String? = null,

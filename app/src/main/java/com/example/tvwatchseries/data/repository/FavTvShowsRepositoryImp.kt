@@ -16,7 +16,7 @@ class FavTvShowsRepositoryImp @Inject constructor(private val tvShowDao: TVShowD
         return tvShowDao.insertTvShow(show)
     }
 
-    override suspend fun removeTvShow(id: String): Int  {
+    override suspend fun removeTvShow(id: Int): Int  {
       return tvShowDao.deleteTvShowById(id)
     }
 }

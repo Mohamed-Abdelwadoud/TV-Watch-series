@@ -1,35 +1,29 @@
 package com.example.tvwatchseries.presentation.adaptors
 
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.example.tvwatchseries.databinding.ItemContainerTvShowBinding
 import com.example.tvwatchseries.domain.model.TvShowsItemModel
 import com.example.tvwatchseries.presentation.util.FetchImageUrl
+import javax.inject.Inject
 
-class TvShowsAdaptor(tvListener: TvListener) :
+class TvShowsAdaptor @Inject constructor(private val tvListener: TvListener) :
     RecyclerView.Adapter<TvShowsAdaptor.ItemTVHolder>() {
-    private var mListener: TvListener
 
-    init {
-        mListener = tvListener
+
+    private var tvShows: MutableList<TvShowsItemModel> = mutableListOf()
+
+    fun addList(list: List<TvShowsItemModel>) {
+        val startPosition = tvShows.size
+        tvShows.addAll(list)
+        notifyItemRangeInserted(startPosition, list.size) // Notify only the added range
     }
 
-    private var tvShows: ArrayList<TvShowsItemModel> = ArrayList()
-
-    fun addList(list: ArrayList<TvShowsItemModel>?) {
-        if (tvShows.isEmpty()) {
-            tvShows = list!!
-        } else {
-            tvShows.addAll(list!!)
-        }
-        notifyDataSetChanged()
-    }
-
-    fun setList(list: ArrayList<TvShowsItemModel>) {
-        tvShows = list
-        notifyDataSetChanged()
+    fun setList(list: MutableList<TvShowsItemModel>) {
+        tvShows.clear()
+        tvShows.addAll(list)
+        notifyItemChanged(tvShows.size)
     }
 
 
@@ -48,8 +42,9 @@ class TvShowsAdaptor(tvListener: TvListener) :
         holder.binding.imageTvShow.contentDescription = "${tvShows[position].id}"
         FetchImageUrl.getImageURL(
             holder.binding.imageTvShow,
-            tvShows[position].imageThumbnailPath!!
+            tvShows[position].imageThumbnailPath ?: ""
         )
+
     }
 
     override fun getItemCount(): Int {
@@ -61,11 +56,18 @@ class TvShowsAdaptor(tvListener: TvListener) :
         RecyclerView.ViewHolder(binding.root) {
         init {
             binding.root.setOnClickListener {
-                mListener.handleTVPress(
+                tvListener.handleTVPress(
                     tvShows[layoutPosition]
                 )
             }
         }
+    }
+
+    fun getItemByPosition(position: Int): TvShowsItemModel {
+        val item = tvShows[position] // Store the item to be returned
+        tvShows.removeAt(position)  // Remove the item from the list
+        notifyItemRemoved(position) // Notify the adapter about the removal
+        return item // Return the stored item
     }
 
 

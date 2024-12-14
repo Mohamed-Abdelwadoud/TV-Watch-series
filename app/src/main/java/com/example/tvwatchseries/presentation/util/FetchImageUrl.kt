@@ -1,5 +1,6 @@
 package com.example.tvwatchseries.presentation.util
 
+import android.util.Log
 import android.widget.ImageView
 import com.example.tvwatchseries.R
 import com.squareup.picasso.Callback

@@ -29,7 +29,7 @@ fun TvShow.toTvShowModel(): TvShowModel =
         name = name,
         id = id,
         permalink = permalink,
-        episodes = episodes?.map { it?.toEpisodesItemModel() },
+        episodes = episodes?.map { it.toEpisodesItemModel() },
         startDate = startDate,
     )
 

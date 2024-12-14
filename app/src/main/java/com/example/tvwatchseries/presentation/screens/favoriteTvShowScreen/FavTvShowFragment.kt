@@ -1,160 +1,98 @@
 package com.example.tvwatchseries.presentation.screens.favoriteTvShowScreen
 
-import android.graphics.Canvas
-import android.graphics.Color
 import android.os.Bundle
-import android.util.Base64
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.Observer
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.Navigation
-import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
-import com.example.tvwatchseries.R
-import com.example.tvwatchseries.data.model.TVShowEntity
 import com.example.tvwatchseries.databinding.FragmentFavTvShowBinding
-import com.example.tvwatchseries.databinding.ItemContainerTvShowBinding
 import com.example.tvwatchseries.domain.model.TvShowsItemModel
-import com.example.tvwatchseries.presentation.adaptors.FavTvShowsAdaptor
-import com.example.tvwatchseries.presentation.screens.favoriteTvShowScreen.FavTvShowFragmentDirections
+import com.example.tvwatchseries.presentation.adaptors.TvShowsAdaptor
+import com.example.tvwatchseries.presentation.util.ActionRemoveFromWatchList
+import com.example.tvwatchseries.presentation.util.SwipeHelper
 import dagger.hilt.android.AndroidEntryPoint
-import it.xabaras.android.recyclerview.swipedecorator.RecyclerViewSwipeDecorator
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
-class FavTvShowFragment : Fragment(), FavTvShowsAdaptor.FavTvShowListener {
-    private lateinit var binding: FragmentFavTvShowBinding
-    private lateinit var mTvShowsAdaptor: FavTvShowsAdaptor
-    private  val mFavTvShowsViewModel: FavTvShowsViewModel by viewModels()
+class FavTvShowFragment : Fragment(), TvShowsAdaptor.TvListener {
+    private var _binding: FragmentFavTvShowBinding? = null
+    private val binding get() = _binding!!
+    private lateinit var mTvShowsAdaptor: TvShowsAdaptor
+    private lateinit var swipeHelper: SwipeHelper
 
+    private val mFavTvShowsViewModel: FavTvShowsViewModel by viewModels()
+
+    // 2 errors .. empty list(null ) and  re arrange
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
-        return inflater.inflate(R.layout.fragment_fav_tv_show, container, false)
+    ): View {
+        _binding = FragmentFavTvShowBinding.inflate(inflater, container, false)
+        return binding.root
 
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        binding = FragmentFavTvShowBinding.bind(view)
 
 
         initUi()
+
+        initObservers()
+    }
+
+
+    private fun initObservers() {
+        mFavTvShowsViewModel.getFavTvShows.observe(viewLifecycleOwner) { shows ->
+            shows?.let {
+                mTvShowsAdaptor.setList(ArrayList(it))
+
+            }
+        }
     }
 
 
     private fun initUi() {
-        mTvShowsAdaptor = FavTvShowsAdaptor(this)
+        mTvShowsAdaptor = TvShowsAdaptor(this)
         binding.favRecyclerView.layoutManager = LinearLayoutManager(context)
         binding.favRecyclerView.adapter = mTvShowsAdaptor
-        mFavTvShowsViewModel.getFavTvShows.observe(viewLifecycleOwner, Observer { shows ->
-            mTvShowsAdaptor.setFavList(shows)
-        })
 
-        setSwipe()
+        swipeHelper = SwipeHelper(binding.favRecyclerView, ActionRemoveFromWatchList())
+        swipeHelper.setSwipe { position ->
 
-    }
-
-
-    private fun setSwipe() {
-        val simpleCallBack: ItemTouchHelper.SimpleCallback =
-            object :
-                ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT) {
-
-                override fun onMove(
-                    recyclerView: RecyclerView,
-                    viewHolder: RecyclerView.ViewHolder,
-                    target: RecyclerView.ViewHolder
-                ): Boolean {
-                    return true
-                }
-
-                override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
-                    if (direction == ItemTouchHelper.LEFT) {
-                        val holder = viewHolder as FavTvShowsAdaptor.FavTvHolder
-                        removeFromWatchList(holder.binding)
-                        mTvShowsAdaptor.notifyDataSetChanged()
-
-                    }
-                }
-
-                override fun onChildDraw(
-                    c: Canvas,
-                    recyclerView: RecyclerView,
-                    viewHolder: RecyclerView.ViewHolder,
-                    dX: Float,
-                    dY: Float,
-                    actionState: Int,
-                    isCurrentlyActive: Boolean
-                ) {
-                    RecyclerViewSwipeDecorator.Builder(
-                        c,
-                        recyclerView,
-                        viewHolder,
-                        dX,
-                        dY,
-                        actionState,
-                        isCurrentlyActive
-                    )
-                        .addSwipeLeftActionIcon(R.drawable.ic_baseline_delete_24)
-                        .addSwipeLeftLabel("Delete")
-                        .addSwipeLeftBackgroundColor(Color.WHITE)
-                        .create()
-                        .decorate()
-
-                    super.onChildDraw(
-                        c,
-                        recyclerView,
-                        viewHolder,
-                        dX,
-                        dY,
-                        actionState,
-                        isCurrentlyActive
-                    )
-                }
-
-            }
-
-        val itemTouchHelper = ItemTouchHelper(simpleCallBack)
-
-        itemTouchHelper.attachToRecyclerView(binding.favRecyclerView)
-    }
-
-
-    private fun removeFromWatchList(holder: ItemContainerTvShowBinding) {
-        mFavTvShowsViewModel.viewModelScope.launch(Dispatchers.IO) {
-            mFavTvShowsViewModel.removeTvShow(holder.imageTvShow.contentDescription.toString())
+            removeFromWatchList(mTvShowsAdaptor.getItemByPosition(position)) // Your action on swipe
         }
 
 
     }
 
-    override fun onClick(tvShowEntity: TVShowEntity) {
+
+    private fun removeFromWatchList(tvShowEntity: TvShowsItemModel) {
+        mFavTvShowsViewModel.viewModelScope.launch(Dispatchers.IO) {
+            mFavTvShowsViewModel.removeTvShow(tvShowEntity.id)
+        }
+
+
+    }
+
+    override fun handleTVPress(tvShowItem: TvShowsItemModel) {
         Navigation.findNavController(requireView()).navigate(
             FavTvShowFragmentDirections.actionFavTvShowFragmentToDetailedTvShowFragment(
-                TvShowsItemModel(
-                    endDate = tvShowEntity,
-                    country = null,
-                    imageThumbnailPath =  Base64.encodeToString(tvShowEntity.showImageBytearray, Base64.DEFAULT),
-                   name =  tvShowEntity.showName,
-                   id =  tvShowEntity.showID.toInt(),
-                   permalink = null,
-                   startDate =  tvShowEntity.showStartDate,
-                   network =  tvShowEntity.showNetwork,
-                    status = tvShowEntity.showStatus
-                )
-
+                tvShowItem
             )
         )
 
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        _binding = null
     }
 
 

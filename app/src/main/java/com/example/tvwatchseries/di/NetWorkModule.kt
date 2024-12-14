@@ -20,7 +20,7 @@ object NetWorkModule {
     @Singleton
     fun provideOkHttpClient(): OkHttpClient {
         val logging = HttpLoggingInterceptor()
-        logging.level = HttpLoggingInterceptor.Level.BODY // Set desired log level
+        logging.level = HttpLoggingInterceptor.Level.BODY
 
         return OkHttpClient.Builder()
             .connectTimeout(30, TimeUnit.SECONDS)

@@ -5,7 +5,7 @@ import com.example.tvwatchseries.domain.model.TvShowsItemModel
 
 fun MostPopularResponse.toMostPopularModel(): MostPopularModel =
     MostPopularModel(
-        tvShows = tvShows?.map { it?.toTvShowsItemModel() },
+        tvShows = (tvShows ?: emptyList()).map { it.toTvShowsItemModel() },
         total = total,
         pages = pages,
         page = page
@@ -20,7 +20,7 @@ fun TvShowsItem.toTvShowsItemModel(): TvShowsItemModel =
         country = country,
         imageThumbnailPath = imageThumbnailPath,
         name = name,
-        id = id,
+        id = id?:0,
         permalink = permalink,
         startDate = startDate,
         network = network,

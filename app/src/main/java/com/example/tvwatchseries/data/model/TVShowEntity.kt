@@ -5,12 +5,27 @@ import androidx.room.PrimaryKey
 
 @Entity
 data class TVShowEntity(
-    @PrimaryKey  var showID: String,
-    var showName: String?,
-    var showStartDate: String?,
-    var showNetwork: String?,
-    var showStatus: String?,
-    var showImageBytearray:ByteArray
-):java.io.Serializable {
+    @PrimaryKey
+    var showID: Int,
+
+    val showEndDate: String ,
+
+    val showCountry: String,
+
+    val imageThumbnailPath: String,
+
+    val showName: String,
+
+
+    val showPermalink: String,
+
+    val showStartDate: String,
+
+    val showNetwork: String,
+
+    val showStatus: String
+
+
+) : java.io.Serializable {
 
 }

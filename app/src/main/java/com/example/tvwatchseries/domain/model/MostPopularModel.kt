@@ -1,9 +1,12 @@
 package com.example.tvwatchseries.domain.model
 
+import com.example.tvwatchseries.data.model.TVShowEntity
+
+
 
 data class MostPopularModel (
 
-    val tvShows: List<TvShowsItemModel?>? = null,
+    val tvShows: List<TvShowsItemModel> = emptyList(),
 
     val total: Int? = null,
 
@@ -14,7 +17,7 @@ data class MostPopularModel (
 
 data class TvShowsItemModel(
 
-    val endDate: Any? = null,
+    val endDate: String? = null,
 
     val country: String? = null,
 
@@ -22,7 +25,7 @@ data class TvShowsItemModel(
 
     val name: String? = null,
 
-    val id: Int? = null,
+    val id: Int ,
 
     val permalink: String? = null,
 
@@ -31,6 +34,7 @@ data class TvShowsItemModel(
     val network: String? = null,
 
     val status: String? = null
+
 ):java.io.Serializable{
 
 }

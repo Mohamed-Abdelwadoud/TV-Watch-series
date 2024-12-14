@@ -11,7 +11,7 @@ data class DetailedResponse(
 data class TvShow(
 
 	@field:SerializedName("end_date")
-	val endDate: Any? = null,
+	val endDate: String? = null,
 
 	@field:SerializedName("country")
 	val country: String? = null,
@@ -20,7 +20,7 @@ data class TvShow(
 	val rating: String? = null,
 
 	@field:SerializedName("countdown")
-	val countdown: Any? = null,
+	val countdown: String? = null,
 
 	@field:SerializedName("description")
 	val description: String? = null,
@@ -32,7 +32,7 @@ data class TvShow(
 	val url: String? = null,
 
 	@field:SerializedName("pictures")
-	val pictures: List<String?>? = null,
+	val pictures: List<String>? = null,
 
 	@field:SerializedName("network")
 	val network: String? = null,
@@ -41,7 +41,7 @@ data class TvShow(
 	val ratingCount: String? = null,
 
 	@field:SerializedName("youtube_link")
-	val youtubeLink: Any? = null,
+	val youtubeLink: String? = null,
 
 	@field:SerializedName("image_thumbnail_path")
 	val imageThumbnailPath: String? = null,
@@ -65,7 +65,7 @@ data class TvShow(
 	val permalink: String? = null,
 
 	@field:SerializedName("episodes")
-	val episodes: List<EpisodesItem?>? = null,
+	val episodes: List<EpisodesItem>? = null,
 
 	@field:SerializedName("start_date")
 	val startDate: String? = null,

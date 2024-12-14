@@ -22,10 +22,10 @@ class PicturesAdaptor(picArray: List<String?>) :
     }
 
     override fun onBindViewHolder(holder: PicHolder, position: Int) {
-        if (picList[position]!!.startsWith("https", true)){
+        if (picList[position]!!.startsWith("https", true)) {
             FetchImageUrl.getImageURL(holder.binding.imageShow, picList[position]!!)
 
-        }else{
+        } else {
             val byteArray: ByteArray = Base64.decode(picList[position]!!, Base64.DEFAULT)
             holder.binding.imageShow.setImageBitmap(
                 BitmapFactory.decodeByteArray(

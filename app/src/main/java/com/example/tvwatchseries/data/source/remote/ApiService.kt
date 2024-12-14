@@ -9,13 +9,13 @@ import retrofit2.http.Query
 interface ApiService {
 
     @GET("most-popular")
-    fun getMostPopularTVShows(@Query("page") page: Int): Call<MostPopularResponse?>?
+    suspend fun getMostPopularTVShows(@Query("page") page: Int): MostPopularResponse
 
 
     @GET("show-details")
-    fun getTVShowDetails(@Query("q") tvShowId: String?): Call<DetailedResponse>?
+   suspend fun getTVShowDetails(@Query("q") tvShowId: String?): DetailedResponse
 
     @GET("search")
-    fun searchTVShow(@Query("q") query: String?, @Query("page") page: Int): Call<MostPopularResponse?>?
+    suspend fun searchTVShow(@Query("q") query: String?, @Query("page") page: Int): MostPopularResponse
 
 }

@@ -10,13 +10,13 @@ data class DetailedTvShowModel(
 
 data class TvShowModel(
 
-    val endDate: Any? = null,
+    val endDate: String? = null,
 
     val country: String? = null,
 
     val rating: String? = null,
 
-    val countdown: Any? = null,
+    val countdown: String? = null,
 
     val description: String? = null,
 
@@ -24,13 +24,13 @@ data class TvShowModel(
 
     val url: String? = null,
 
-    val pictures: List<String?>? = null,
+    val pictures: List<String>? = null,
 
     val network: String? = null,
 
     val ratingCount: String? = null,
 
-    val youtubeLink: Any? = null,
+    val youtubeLink: String? = null,
 
     val imageThumbnailPath: String? = null,
 
@@ -46,7 +46,7 @@ data class TvShowModel(
 
     val permalink: String? = null,
 
-    val episodes: List<EpisodesItemModel?>? = null,
+    val episodes: List<EpisodesItemModel>? = emptyList(),
 
     val startDate: String? = null,
 

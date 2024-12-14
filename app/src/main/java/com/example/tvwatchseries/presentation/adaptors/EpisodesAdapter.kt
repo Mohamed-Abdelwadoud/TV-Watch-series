@@ -5,8 +5,9 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.example.tvwatchseries.data.model.EpisodesItem
 import com.example.tvwatchseries.databinding.EpisodeLayoutBinding
+import com.example.tvwatchseries.domain.model.EpisodesItemModel
 
-class EpisodesAdapter(epsList: List<EpisodesItem>) :
+class EpisodesAdapter(epsList: List<EpisodesItemModel>) :
     RecyclerView.Adapter<EpisodesAdapter.EpisodeHolder>() {
     private var list = epsList
 

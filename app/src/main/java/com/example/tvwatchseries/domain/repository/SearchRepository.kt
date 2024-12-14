@@ -1,9 +1,10 @@
 package com.example.tvwatchseries.domain.repository
 
-import androidx.lifecycle.MutableLiveData
 import com.example.tvwatchseries.domain.model.MostPopularModel
+import com.example.tvwatchseries.utility.NetWorkResponseResult
+import kotlinx.coroutines.flow.Flow
 
 interface SearchRepository {
-    fun getSearchedShows(name:String,page: Int ): MutableLiveData<MostPopularModel>
+    suspend fun getSearchedShows(name:String, page: Int ): Flow<NetWorkResponseResult<MostPopularModel>>
 
 }

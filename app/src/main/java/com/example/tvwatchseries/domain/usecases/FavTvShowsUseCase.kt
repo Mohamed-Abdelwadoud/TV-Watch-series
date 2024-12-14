@@ -10,7 +10,7 @@ class FavTvShowsUseCase @Inject constructor(private val repository: FavTvShowsRe
         repository.addTvShow(tvShow)
     }
 
-    suspend fun removeTvShow(id: String) :Int{
+    suspend fun removeTvShow(id: Int) :Int{
        return repository.removeTvShow(id)
     }
 
